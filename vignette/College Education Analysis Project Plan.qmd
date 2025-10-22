@@ -2,25 +2,53 @@
 title: "College Education Analysis Project Plan"
 format: html
 editor: visual
+embed-resources: true
 ---
 
-## Quarto
+### Context of the problem to be analyzed:
 
-Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+### Literature Review:
 
-## Running Code
+Article/paper 1:
 
-When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+https://cepa.stanford.edu/sites/default/files/loebpage.pdf
 
-```{r}
-1 + 1
-```
+Article/paper 2:
 
-You can add options to executable code like this
+Article/paper 3:
 
-```{r}
-#| echo: false
-2 * 2
-```
+### Proposed Data Source:
 
-The `echo: false` option disables the printing of code (only output is displayed).
+Links and descriptions
+
+<https://ies.ed.gov/>
+
+The data is pulled from the Institute of Education Sciences. 
+
+2013-2023
+
+### Use Case & Actor Description
+
+### 	Actor Description: University School boards, school admins
+
+### Actor Questions of Interest
+
+### Anticipated Workflow for the Actor
+
+### Ethics Review
+
+### Layout of the App
+
+### User Data Selection and Manipulation
+
+### User Exploratory Numerical/Graphical Analysis
+
+### Statistical Models and Tests
+
+### Group Names and Responsibilities
+
+### Approach to Team Workflow, collaboration and branching
+
+### Schedule
+
+### Dates for phases/ milestones
