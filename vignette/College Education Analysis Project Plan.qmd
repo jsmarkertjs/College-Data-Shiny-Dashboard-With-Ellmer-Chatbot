@@ -45,11 +45,31 @@ The data is pulled from the Institute of Education Sciences. 
 
 ### Use Case & Actor Description
 
-### Actor Description: University School boards, school admins
+Actor Description: University School boards, school admins
 
 ### Actor Questions of Interest
 
 ### Anticipated Workflow for the Actor
+
+1.  **Entry and Initial Selection:** The user lands on the application's main page. They are presented with a search bar to find a specific institution by name (e.g., "University of Alabama") and a set of primary categorical filters (e.g., State, Control of Institution: Public/Private, Historically Black College or University, Religious Affiliation).
+2.  **Filtering and Data Loading:** The user either searches for a single school or selects a set of filters (e.g., "Public" and "HBCU"). Upon selection, the application queries the dataset and loads the relevant financial and outcome data.
+3.  **Initial Visualization:** The user is shown a primary dashboard for their selection. This dashboard features a main line chart displaying two key trends over the past 10 years:
+    -   **Metric 1:** The Aid-to-Tuition Ratio (calculated from `financial_aid_data.csv` and `tuition_data.csv`).
+
+    -   **Metric 2:** The 6-Year Graduation Rate (calculated from `grad_data.csv` and `enrollment_data.csv`).
+4.  **Demographics:** The user wants to see how these trends affect a specific subgroup so they use secondary filters on the dashboard to select a `Race` (e.g., "Black or African American") and `Gender` (e.g., "Women").
+5.  **Data Refresh:** The visualizations instantly update so that the 10-year trend lines for both the aid ratio and graduation rate are recalculated to reflect the data only for Black or African American women at the selected institution(s).
+6.  **Visual Insight:** The user visually inspects the two charts and forms a hypothesis. For example, they might observe, "It looks like when the aid ratio dipped between 2017 and 2019, the graduation rate for this group also leveled off or declined."
+7.  **Statistical Analysis:** To test this visual hypothesis, the user clicks a button labeled **"Run Statistical Analysis."**
+8.  **Model Results Display:** The application runs a correlation test and a simple linear regression on the 10 data points displayed in the charts (the 10 yearly values for Aid Ratio vs. Grad Rate). A new "Analysis" card appears on the dashboard with a plain-English summary:
+    -   **Correlation Coefficient: r = #.## (Moderately Strong Positive)**
+
+    -   **Interpretation:** "This suggests a positive relationship. For this group, years with higher aid-to-tuition ratios were also associated with higher graduation rates."
+
+    -   **Regression Model:** "For every #% increase in the aid-to-tuition ratio, the graduation rate was associated with a **#.## percentage point increase**."
+
+    -   **Model Fit (R-squared): #.##**("This means ##% of the change in graduation rates over this 10-year period can be statistically explained by the changes in the aid-to-tuition ratio.")
+9.  **Drawing Insights:** The actor can now make a much stronger conclusion. They have combined their visual observation with a quantitative, statistical test, allowing them to confirm or not confirm their assumption (that less aid hurts grad rates) with statistical evidence for the specific school and demographic they are investigating.
 
 ### Ethics Review
 
@@ -64,6 +84,8 @@ The data is pulled from the Institute of Education Sciences. 
 ### Group Names and Responsibilities
 
 ### Approach to Team Workflow, collaboration and branching
+
+Our group will use a coordinated approach centered on GitHub for version control and a dedicated message channel for daily communication. We will follow a simplified branching model where the `main` branch is protected and stores only stable, milestone-ready versions. Each team member will conduct all development on their own persistent, personal branch, named after them. When a task or feature is complete, the group member will submit a Pull Request (PR) on GitHub to merge their personal branch into the `main` branch. This PR will require review and approval from at least one other group member to ensure code quality, share knowledge, and prevent conflicts. This workflow allows us to work in parallel on our individual branches while ensuring the `main` branch always remains in a functional state. To further avoid merge conflicts, we have implemented a system in a shared doc that allows us to see which part of the project someone is currently working on. This way, two group members will not be overwriting each others code with their work at the same time.
 
 ### Schedule
 
