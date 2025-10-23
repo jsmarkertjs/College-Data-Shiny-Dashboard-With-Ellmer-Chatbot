@@ -39,15 +39,19 @@ College Selectivity and Degree Completion, by Scott Heil, Liza Reisel, and Paul 
 
 ### Proposed Data Source:
 
-Links and descriptions
+Our data comes from: <https://ies.ed.gov/> - Institute of Education Sciences
 
-<https://ies.ed.gov/>
+We pulled data from 2013-2023. The website allows for selection fromvarious data sets with various filters. We ended up with 5 different raw data sets that will later be cleaned and combined.
 
-number of vars, number of obvs
+Characteristics data: 2208 rows, 11 columns; contains the school names and characteristics.
 
-The data is pulled from the Institute of Education Sciences. 
+Enrollment data: 371882 rows, 6 columns; contains enrollment data of each college with different demographic data.
 
-2013-2023
+Financial aid data: 88321 rows, 6 columns; contains each college and relevant aid types and amounts.
+
+Grad data: 677501 rows, 8 columns; contains number of graduated students in each college with a few demographics.
+
+Tuition data: 495059 rows, 5 columns; contains both in and out of state tuition for each university.
 
 ### Use Case & Actor Description
 
@@ -83,7 +87,9 @@ Actor Description: University School boards, school admins
 
 ### User Data Selection and Manipulation
 
-Line graph? refer to plan
+A user will have the option to search for specific institutions to select data, or filter data by year or other categories based on our categorical variables (such as public/private university) and see the resulting data set.
+
+We will also provide the option to log certain numerical columns for future use visualization use.
 
 ### User Exploratory Numerical/Graphical Analysis
 
@@ -109,7 +115,7 @@ Our group will use a coordinated approach centered on GitHub for version control
 
 10/27 Peer plan review turned in to other group
 
-10/30 Data Prepation complete
+10/30 Data Preperation complete
 
 11/4 User Data Selection and Manipulation due
 
