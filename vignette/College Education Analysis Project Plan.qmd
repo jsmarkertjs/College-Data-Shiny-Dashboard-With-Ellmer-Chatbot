@@ -17,13 +17,21 @@ The primary goal is to develop an application that allows users to visualize and
 
 ### Literature Review:
 
-Article/paper 1:
+#### 1:
 
 https://cepa.stanford.edu/sites/default/files/loebpage.pdf
 
-Article/paper 2:
+The relationship between a university’s resources and its students’ success is a cornerstone of educational research across the country. Intuitively, it may seem that increased spending should lead to better outcomes, but studies often struggle to find a consistent, systematic link. For instance, reviews of literature on this topic have shown that student outcomes are not consistently related to teacher salaries or per-pupil expenditures. This raises questions for analytics in higher education as to what specific factors truly drive student achievement if it is not raw financial input. 
 
-Article/paper 3:
+A study by Susanna Loeb and Marianne E. Page, “Examining the Link Between Teacher Wages and Student Outcomes”, provides an interesting answer. The authors argue that previous research failed to produce robust results because they overlooked important economic and social variables. Specifically, they point out the importance of accounting for non-pecuniary job attributes, such as school safety and parental involvement, and alternative labor market opportunities for teachers. A high salary may not attract the best educators if other, more lucrative professions are readily available in the same geographic area. 
+
+By creating a “relative wage” measure that compares teacher salaries to those of other college educated professionals, Loed and Page were able to isolate the true effect of compensation. Their findings were significant where after controlling for those external factors, they estimated that a 10% increase in teacher wages reduces high school dropout rates by 3% to 4%. This demonstrates that when salaries are competitive within the local labor market, they have a tangible positive impact on student retention. 
+
+This study provides a strong theoretical framework for analyzing our dataset on U.S. universities and colleges. While Loed and Page focused on high schools, their methodology is directly applicable to higher education. By examining variables such as staff salaries, we can investigate whether universities that invest more in their faculty see higher graduation rates. Furthermore, this research encourages us to consider how institutional investment interacts with student preparedness, as indicated by things like SAT/ACT scores, to produce successful student outcomes. 
+
+#### 2:
+
+#### 3:
 
 ### Proposed Data Source:
 
