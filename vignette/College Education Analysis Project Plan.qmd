@@ -31,6 +31,10 @@ This study provides a strong theoretical framework for analyzing our dataset on 
 
 #### 2:
 
+Heil, S., Reisel, L., & Attewell, P. (2014). College Selectivity and Degree Completion. American Educational Research Journal, 51(5), 913–935. <https://doi.org/10.3102/0002831214544298>
+
+College Selectivity and Degree Completion, by Scott Heil, Liza Reisel, and Paul Attewell looked at if college selectivity affected a college student’s likelihood of graduation. This paper measured if a student were to graduate college within 6 years of starting, and used many predictors including SAT selectivity and tuition. They adjusted for likelihood of attending a college or a certain level and then compared how different predictors were associated with chances of graduation. They found graduation rates were largely affected by the makeup of the student body and by high tuition. They concluded that selectivity of a college does affect graduation rates to a very small extent, but that there is weak evidence that the chance of graduation for students who would struggle to graduate would improve if they attended a more selective college. Our project includes data on many US colleges and a big variable we are looking at is graduation numbers. It is helpful to know that selectivity of the school likely doesn’t play a key role in a student graduating, but it would be interesting to look at tuition in correlation to those graduation rates.
+
 #### 3:
 
 ### Proposed Data Source:
@@ -38,6 +42,8 @@ This study provides a strong theoretical framework for analyzing our dataset on 
 Links and descriptions
 
 <https://ies.ed.gov/>
+
+number of vars, number of obvs
 
 The data is pulled from the Institute of Education Sciences. 
 
@@ -77,11 +83,23 @@ Actor Description: University School boards, school admins
 
 ### User Data Selection and Manipulation
 
+Line graph? refer to plan
+
 ### User Exploratory Numerical/Graphical Analysis
 
 ### Statistical Models and Tests
 
 ### Group Names and Responsibilities
+
+Jon Cote: interactive statistical modeling and analysis focus
+
+John Dye: focus on data manipulation and data format for app
+
+Camden Egan: statistical visualization focus
+
+Jack Market: focus on app organization and structure focus
+
+Shae Ramberg: focus on statistical analysis
 
 ### Approach to Team Workflow, collaboration and branching
 
@@ -89,4 +107,18 @@ Our group will use a coordinated approach centered on GitHub for version control
 
 ### Schedule
 
-### Dates for phases/ milestones
+10/27 Peer plan review turned in to other group
+
+10/30 Data Prepation complete
+
+11/4 User Data Selection and Manipulation due
+
+11/7 User Exploratory Numerical/Graphical Analysis due
+
+11/10 Statistical Models and Tests due
+
+11/11 Project Report due
+
+11/11-12/9 Weekly group meeting for progress updates
+
+12/9 Shiny App, Vignette, Peer Collaboration Assessment, and Oral Demonstration due
