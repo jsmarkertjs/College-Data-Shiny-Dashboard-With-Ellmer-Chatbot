@@ -37,7 +37,7 @@ College Selectivity and Degree Completion, by Scott Heil, Liza Reisel, and Paul 
 
 #### 3:
 
-### Proposed Data Source:
+The study “The Impact of Tuition Increases on Enrollment at Public Colleges and Universities” by Steven W. Hemelt and Dave E. Marcotte (2011) provides foundational insight into how rising tuition costs affect student access and retention in higher education. Using data from the Integrated Postsecondary Education Data System (IPEDS) from 1991 to 2006, the authors examined enrollment responses to changes in tuition across all U.S. public four-year institutionsProposed Data Source:
 
 Our data comes from: <https://ies.ed.gov/> - Institute of Education Sciences
 
