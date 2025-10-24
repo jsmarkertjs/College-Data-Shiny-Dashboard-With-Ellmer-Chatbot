@@ -101,11 +101,11 @@ Our app could help users answer four key types of questions:
     -   **Model Fit (R-squared): #.##**("This means ##% of the change in graduation rates over this 10-year period can be statistically explained by the changes in the aid-to-tuition ratio.")
 9.  **Drawing Insights:** The actor can now make a much stronger conclusion. They have combined their visual observation with a quantitative, statistical test, allowing them to confirm or not confirm their assumption (that less aid hurts grad rates) with statistical evidence for the specific school and demographic they are investigating.
 
-# Part 4: Ethical Review
+## Part 4: Ethical Review
 
 The *College Cost & Completion* project requires our group to handle college education data responsibly throughout every stage of its life cycle. We are using public and de-identified datasets from the **Institute of Education Sciences (IES)** that describe tuition costs, graduation rates, and financial aid amounts for U.S. colleges between 2013 and 2023. Even though the data do not contain personal information, we are still guided by ethical standards to make sure everything is collected, analyzed, and shared accurately and fairly.
 
-## Data Life Cycle and Ethical Responsibility
+### Data Life Cycle and Ethical Responsibility
 
 Ethics apply to the entire data life cycle, from how we collect and prepare the data to how we visualize and report it. During the **data collection and preparation stage**, we make sure our sources are public and approved for use. Because the IES data include large national datasets, there is very little risk of identifying individual students. Still, we are careful when combining and cleaning data to prevent mistakes that could change or misrepresent the results.
 
@@ -113,17 +113,17 @@ During the **data analysis stage**, we focus on accuracy, fairness, and transpar
 
 In the **visualization and reporting stages**, ethics mean showing results clearly and avoiding distortion of data. We include complete and honest representations of what our analysis shows. For example, when displaying differences between universities or demographics, we will clearly explain what the data measure and what they do not. We also will label all charts so users understand any trends or gaps without reading incorrect conclusions into them.
 
-## Following Professional Guidelines
+### Following Professional Guidelines
 
 Our group aligns its ethical practices with the **ACM Code of Ethics**, which focuses on honesty, responsibility, and respect for data subjects. The code emphasizes that computing professionals must "avoid harm" and "be fair and take action not to discriminate." These principles apply directly to our project. We make sure that our visualizations and data summaries do not reinforce stereotypes or suggest biased interpretations based on race, gender, or institution type.
 
 In addition, the **American Statistical Association (ASA)** code highlights accuracy, transparency, and integrity in statistical work. Following these principles, we commit to reporting our data sources, explaining our methods, and recognizing uncertainty. We will describe correlation values clearly and include context about statistical limits to keep the results honest and trustworthy.
 
-## Collaboration and Integrity
+### Collaboration and Integrity
 
 Ethical conduct also applies to our group’s collaboration process. Using GitHub ensures that all team members’ contributions are tracked and reviewed before merging into the main branch. This transparent process prevents lost code, conflicting updates, or unapproved changes. Each team member is responsible for maintaining data accuracy, writing clean code, and regularly communicating with others. These steps contribute to ethical teamwork by keeping our process open, well-documented, and accountable.
 
-## Conclusion
+### Conclusion
 
 Ethics are central to every part of the *College Cost & Completion* project, from collecting data responsibly to presenting fair, clear, and accurate findings. By following the **ACM Code of Ethics** and **ASA guidelines**, our team ensures that this analysis serves both academic and public interests while respecting honesty, fairness, and accuracy at every stage of the project’s life cycle.
 
