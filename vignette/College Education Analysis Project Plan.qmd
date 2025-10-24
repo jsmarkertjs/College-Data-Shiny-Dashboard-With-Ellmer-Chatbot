@@ -69,7 +69,7 @@ The app's workflow directly serves both actors' goals. The prospective students 
 
 ### Actor Questions of Interest
 
-Our app could help users answer four key types of questions:
+Our app could help users answer four types of questions:
 
 1.  **Data Look up:** What are the current tuition, average financial aid, and graduation rates at a specific school?
 
@@ -82,7 +82,7 @@ Our app could help users answer four key types of questions:
 ### Anticipated Workflow for the Actor
 
 1.  **Entry and Initial Selection:** The user lands on the application's main page. They are presented with a search bar to find a specific institution by name (e.g., "University of Alabama") and a set of primary categorical filters (e.g., State, Control of Institution: Public/Private, Historically Black College or University, Religious Affiliation).
-2.  **Filtering and Data Loading:** The user either searches for a single school or selects a set of filters (e.g., "Public" and "HBCU"). Upon selection, the application queries the dataset and loads the relevant financial and outcome data.
+2.  **Filtering and Data Loading:** The user either searches for a single school or selects a set of filters (e.g., "Public" and "HBCU"). Upon selection, the application queries the data set and loads the relevant financial and outcome data.
 3.  **Initial Visualization:** The user is shown a primary dashboard for their selection. This dashboard features a main line chart displaying two key trends over the past 10 years:
     -   **Metric 1:** The Aid-to-Tuition Ratio (calculated from `financial_aid_data.csv` and `tuition_data.csv`).
 
@@ -90,9 +90,9 @@ Our app could help users answer four key types of questions:
 4.  **Demographics:** The user wants to see how these trends affect a specific subgroup so they use secondary filters on the dashboard to select a `Race` (e.g., "Black or African American") and `Gender` (e.g., "Women").
 5.  **Data Refresh:** The visualizations instantly update so that the 10-year trend lines for both the aid ratio and graduation rate are recalculated to reflect the data only for Black or African American women at the selected institution(s).
 6.  **Visual Insight:** The user visually inspects the two charts and forms a hypothesis. For example, they might observe, "It looks like when the aid ratio dipped between 2017 and 2019, the graduation rate for this group also leveled off or declined."
-7.  **Statistical Analysis:** To test this visual hypothesis, the user clicks a button labeled **"Run Statistical Analysis."**
+7.  **Statistical Analysis:** To test this visual hypothesis, the user clicks a button labeled "Run Statistical Analysis."
 8.  **Model Results Display:** The application runs a correlation test and a simple linear regression on the 10 data points displayed in the charts (the 10 yearly values for Aid Ratio vs. Grad Rate). A new "Analysis" card appears on the dashboard with a plain-English summary:
-    -   **Correlation Coefficient: r = #.## (Moderately Strong Positive)**
+    -   **Correlation Coefficient:** r = #.## (Moderately Strong Positive)
 
     -   **Interpretation:** "This suggests a positive relationship. For this group, years with higher aid-to-tuition ratios were also associated with higher graduation rates."
 
@@ -105,7 +105,7 @@ Our app could help users answer four key types of questions:
 
 The *College Cost & Completion* project requires our group to handle college education data responsibly throughout every stage of its life cycle. We are using public and de-identified datasets from the **Institute of Education Sciences (IES)** that describe tuition costs, graduation rates, and financial aid amounts for U.S. colleges between 2013 and 2023. Even though the data do not contain personal information, we are still guided by ethical standards to make sure everything is collected, analyzed, and shared accurately and fairly.
 
-### Data Life Cycle and Ethical Responsibility
+###  Data Life Cycle and Ethical Responsibility
 
 Ethics apply to the entire data life cycle, from how we collect and prepare the data to how we visualize and report it. During the **data collection and preparation stage**, we make sure our sources are public and approved for use. Because the IES data include large national datasets, there is very little risk of identifying individual students. Still, we are careful when combining and cleaning data to prevent mistakes that could change or misrepresent the results.
 
