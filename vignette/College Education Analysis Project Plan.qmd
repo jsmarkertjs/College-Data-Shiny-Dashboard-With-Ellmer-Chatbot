@@ -5,6 +5,16 @@ editor: visual
 embed-resources: true
 ---
 
+## Part 1: Admin
+
+App Name: College Cost & Completion
+
+DATA-613: Jon Cote
+
+DATA-413: John Dye, Camden Egan, Jack Market, Shae Ramberg
+
+## Part 2: Topic and Data
+
 ### Context of the problem to be analyzed:
 
 The problem to be analyzed is the relationship between the financial burden of higher education (specifically the ratio of financial aid to tuition costs) and student outcomes (specifically graduation rates). The analysis will test the assumption that a decrease in financial aid relative to tuition costs negatively impacts graduation rates, and that the COVID-19 pandemic likely exacerbated these negative effects.
@@ -55,6 +65,8 @@ Grad data: 677501 rows, 8 columns; contains number of graduated students in each
 
 Tuition data: 495059 rows, 5 columns; contains both in and out of state tuition for each university.
 
+## Part 3: Use Case
+
 ### Use Case & Actor Description
 
 Actor Description: University School boards, school admins
@@ -83,7 +95,11 @@ Actor Description: University School boards, school admins
     -   **Model Fit (R-squared): #.##**("This means ##% of the change in graduation rates over this 10-year period can be statistically explained by the changes in the aid-to-tuition ratio.")
 9.  **Drawing Insights:** The actor can now make a much stronger conclusion. They have combined their visual observation with a quantitative, statistical test, allowing them to confirm or not confirm their assumption (that less aid hurts grad rates) with statistical evidence for the specific school and demographic they are investigating.
 
-### Ethics Review
+## Part 4: Ethical Reveiw
+
+### Ethics Review 
+
+## Part 5: App Concept
 
 ### Layout of the App
 
@@ -96,6 +112,8 @@ We will also provide the option to log certain numerical columns for future use 
 ### User Exploratory Numerical/Graphical Analysis
 
 ### Statistical Models and Tests
+
+## Part 6: Collaboration
 
 ### Group Names and Responsibilities
 
