@@ -27,17 +27,11 @@ The primary goal is to develop an application that allows users to visualize and
 
 ### Literature Review:
 
-#### 1: Link Between Teacher Wages and Student Outcomes
+#### 1: 
 
-The relationship between a university’s resources and its students’ success is a cornerstone of educational research across the country. Intuitively, it may seem that increased spending should lead to better outcomes, but studies often struggle to find a consistent, systematic link. For instance, reviews of literature on this topic have shown that student outcomes are not consistently related to teacher salaries or per-pupil expenditures. This raises questions for analytics in higher education as to what specific factors truly drive student achievement if it is not raw financial input. 
+Loeb, Susanna, and Marianne E. Page. "Examining the Link Between Teacher Wages and Student Outcomes: The Importance of Alternative Labor Market Opportunities and Non-Pecuniary Variation." *The Review of Economics and Statistics*, vol. 82, no. 3, Aug. 2000, pp. 393-408. *Stanford CEPA*, <https://cepa.stanford.edu/sites/default/files/loebpage.pdf>.
 
-A study by Susanna Loeb and Marianne E. Page, “Examining the Link Between Teacher Wages and Student Outcomes”, provides an interesting answer. The authors argue that previous research failed to produce robust results because they overlooked important economic and social variables. Specifically, they point out the importance of accounting for non-pecuniary job attributes, such as school safety and parental involvement, and alternative labor market opportunities for teachers. A high salary may not attract the best educators if other, more lucrative professions are readily available in the same geographic area. 
-
-By creating a “relative wage” measure that compares teacher salaries to those of other college educated professionals, Loed and Page were able to isolate the true effect of compensation. Their findings were significant where after controlling for those external factors, they estimated that a 10% increase in teacher wages reduces high school dropout rates by 3% to 4%. This demonstrates that when salaries are competitive within the local labor market, they have a tangible positive impact on student retention. 
-
-This study provides a strong theoretical framework for analyzing our dataset on U.S. universities and colleges. While Loed and Page focused on high schools, their methodology is directly applicable to higher education. By examining variables such as staff salaries, we can investigate whether universities that invest more in their faculty see higher graduation rates. Furthermore, this research encourages us to consider how institutional investment interacts with student preparedness, as indicated by things like SAT/ACT scores, to produce successful student outcomes. 
-
-[Source](https://cepa.stanford.edu/sites/default/files/loebpage.pdf)
+The relationship between a university’s resources and its students’ success is a cornerstone of educational research across the country. Intuitively, it may seem that increased spending should lead to better outcomes, but studies often struggle to find a consistent, systematic link. For instance, reviews of literature on this topic have shown that student outcomes are not consistently related to teacher salaries or per-pupil expenditures. This raises questions for analytics in higher education as to what specific factors truly drive student achievement if it is not raw financial input. A study by Susanna Loeb and Marianne E. Page, “Examining the Link Between Teacher Wages and Student Outcomes”, provides an interesting answer. The authors argue that previous research failed to produce robust results because they overlooked important economic and social variables. Specifically, they point out the importance of accounting for non-pecuniary job attributes, such as school safety and parental involvement, and alternative labor market opportunities for teachers. A high salary may not attract the best educators if other, more lucrative professions are readily available in the same geographic area.By creating a “relative wage” measure that compares teacher salaries to those of other college educated professionals, Loed and Page were able to isolate the true effect of compensation. Their findings were significant where after controlling for those external factors, they estimated that a 10% increase in teacher wages reduces high school dropout rates by 3% to 4%. This demonstrates that when salaries are competitive within the local labor market, they have a tangible positive impact on student retention. This study provides a strong theoretical framework for analyzing our dataset on U.S. universities and colleges. While Loed and Page focused on high schools, their methodology is directly applicable to higher education. By examining variables such as staff salaries, we can investigate whether universities that invest more in their faculty see higher graduation rates. Furthermore, this research encourages us to consider how institutional investment interacts with student preparedness, as indicated by things like SAT/ACT scores, to produce successful student outcomes. 
 
 #### 2:
 
@@ -69,9 +63,21 @@ Tuition data: 495059 rows, 5 columns; contains both in and out of state tuition 
 
 ### Use Case & Actor Description
 
-Actor Description: University School boards, school admins
+Our primary actors are prospective students and parents and researchers, either for institutions themselves or for policymaking. The prospective students and parents are motivated by a practical need to find the "best value" college; their goal is to use our app's demographic filters (race, gender) to see the 10-year aid-to-tuition ratios and graduation rates for students like them. The researchers are motivated by a research need; their goal is to use our app's institutional filters (e.g., HBCU, Public/Private) to identify systemic trends and use the statistical analysis features to find evidence for how financial aid correlate with student outcomes.
+
+The app's workflow directly serves both actors' goals. The prospective students and parents will filter for a specific school and demographic, then visually compare the multi-year trend lines for the aid-to-tuition ratio and graduation rates to inform their enrollment decision. The researchers will take this one step further and after filtering for a group of institutions, they will click the "Run Statistical Analysis" button to quantify the visual trend. This provides them with a correlation coefficient and regression output, allowing them to statistically test the hypothesis that changes in financial aid are directly associated with changes in graduation rates for that institutional category
 
 ### Actor Questions of Interest
+
+Our app could help users answer four key types of questions:
+
+1.  **Data Look up:** What are the current tuition, average financial aid, and graduation rates at a specific school?
+
+2.  **Trend Analysis:** How have these metrics (especially the aid-to-tuition ratio and graduation rates) changed over the last 10 years?
+
+3.  **Equity Analysis:** How do these trends differ for specific groups based on race, gender, or institutional type (like HBCU or religious affiliation)?
+
+4.  **Hypothesis Testing:** Is there a statistically significant correlation between the financial aid-to-tuition ratio and graduation rates for a given school or demographic?
 
 ### Anticipated Workflow for the Actor
 
@@ -104,6 +110,48 @@ ethical review here
 ## Part 5: App Concept
 
 ### Layout of the App
+
+Our application will be designed as a single-page, interactive dashboard. We decided to have a single page design to make the user's workflow more seamless and make the connection between the visual trends and statistical analysis clear. The UI will be divided into two main sections: a persistent Control Panel on the left and a dynamic Dashboard Display on the right.
+
+**1. Left Sidebar: Control Panel**
+
+This panel serves as the user's primary starting point for all queries. It will contain all the controls needed to select a dataset for analysis.
+
+-   **School Search Bar:** A text search field allowing the user to find and select a specific institution by name.
+
+-   **Primary Institutional Filters:** A set of dropdown menus to filter for groups of schools. Filters will include:
+
+    -   Control of Institution (Public, Private not-for-profit, etc.)
+
+    -   State
+
+    -   Historically Black College or University (Yes/No)
+
+    -   Religious Affiliation
+
+    -   Degree of Urbanization (City, Suburb, etc.)
+
+-   **Year Selection:** A set of check boxes to allow the user to customize the years used in the data selection.
+
+**2. Main Area: Dashboard Display**
+
+This section is the dynamic output area where all visualizations and analysis are displayed. It will update based on the user's selections.
+
+-   **Demographic Filter Bar:** Located at the top of the main area, this bar will contain dropdowns for Race and Gender, allowing the user to drill down into the data. These filters will update the visualizations in real-time.
+
+-   **Main Trend Visualization:** This will be the largest component on the screen—an interactive line chart showing the selected year trends for the selected school(s) and demographic.
+
+    -   **Interactivity:** The user can hover over any point on the lines to see a tooltip with the exact values for that year.
+
+-   **Statistical Analysis Card:** This section will be positioned directly below the main chart to provide immediate, contextual analysis.
+
+    -   **"Run Statistical Analysis" Button:** When clicked, this will run the correlation and regression models on the currently displayed data.
+
+    -   **Results Display:** A card will appear with a plain-English summary of the results, including the Correlation Coefficient, the Linear Regression Summary (e.g., "A 1% increase in aid ratio was associated with a 0.35 point increase in grad rate"), and the R-Squared value.
+
+-   **Data table viewer:**
+
+    -   At the bottom of the layout, we will add a interactive data table viewer to allow users to see the data for themselves.
 
 ### User Data Selection and Manipulation
 
