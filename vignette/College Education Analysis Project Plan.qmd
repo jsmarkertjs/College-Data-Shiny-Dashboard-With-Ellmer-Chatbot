@@ -27,7 +27,7 @@ The primary goal is to develop an application that allows users to visualize and
 
 ### Literature Review:
 
-#### 1: 
+#### 1:
 
 Loeb, Susanna, and Marianne E. Page. "Examining the Link Between Teacher Wages and Student Outcomes: The Importance of Alternative Labor Market Opportunities and Non-Pecuniary Variation." *The Review of Economics and Statistics*, vol. 82, no. 3, Aug. 2000, pp. 393-408. *Stanford CEPA*, <https://cepa.stanford.edu/sites/default/files/loebpage.pdf>.
 
