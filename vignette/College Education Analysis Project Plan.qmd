@@ -113,47 +113,7 @@ Ethics are central to every part of the *College Cost & Completion* project, fro
 
 ### Layout of the App
 
-Our application will be designed as a single-page, interactive dashboard. We decided to have a single page design to make the user's workflow more seamless and make the connection between the visual trends and statistical analysis clear. The UI will be divided into two main sections: a persistent Control Panel on the left and a dynamic Dashboard Display on the right.
-
-**1. Left Sidebar: Control Panel**
-
-This panel serves as the user's primary starting point for all queries. It will contain all the controls needed to select a dataset for analysis.
-
--   **School Search Bar:** A text search field allowing the user to find and select a specific institution by name.
-
--   **Primary Institutional Filters:** A set of dropdown menus to filter for groups of schools. Filters will include:
-
-    -   Control of Institution (Public, Private not-for-profit, etc.)
-
-    -   State
-
-    -   Historically Black College or University (Yes/No)
-
-    -   Religious Affiliation
-
-    -   Degree of Urbanization (City, Suburb, etc.)
-
--   **Year Selection:** A set of check boxes to allow the user to customize the years used in the data selection.
-
-**2. Main Area: Dashboard Display**
-
-This section is the dynamic output area where all visualizations and analysis are displayed. It will update based on the user's selections.
-
--   **Demographic Filter Bar:** Located at the top of the main area, this bar will contain dropdowns for Race and Gender, allowing the user to drill down into the data. These filters will update the visualizations in real-time.
-
--   **Main Trend Visualization:** This will be the largest component on the screen—an interactive line chart showing the selected year trends for the selected school(s) and demographic.
-
-    -   **Interactivity:** The user can hover over any point on the lines to see a tooltip with the exact values for that year.
-
--   **Statistical Analysis Card:** This section will be positioned directly below the main chart to provide immediate, contextual analysis.
-
-    -   **"Run Statistical Analysis" Button:** When clicked, this will run the correlation and regression models on the currently displayed data.
-
-    -   **Results Display:** A card will appear with a plain-English summary of the results, including the Correlation Coefficient, the Linear Regression Summary (e.g., "A 1% increase in aid ratio was associated with a 0.35 point increase in grad rate"), and the R-Squared value.
-
--   **Data table viewer:**
-
-    -   At the bottom of the layout, we will add a interactive data table viewer to allow users to see the data for themselves.
+Our application will be a single-page, interactive dashboard with a two-column layout: a Left Sidebar (Control Panel) and a Main Area (Dashboard Display). This single-page design ensures a seamless workflow, keeping the visual trends and statistical analysis clearly connected. The Control Panel will contain all user inputs: a School Search Bar, Institutional Filters (Control, State, HBCU, Religious, Urbanization), and Year Selection checkboxes. The main Dashboard Display will feature a Demographic Filter Bar (`Race`/`Gender`) at the top, followed by the Main Trend Visualization (an interactive line chart with hover-over tooltips). Positioned directly below the chart is the Statistical Analysis Card, where a "Run Statistical Analysis" button will generate a plain-English summary of the correlation, regression, and R-Squared. Finally, an interactive data table viewer will be placed at the bottom for users to see the raw data for themselves.
 
 ### User Data Selection and Manipulation
 
