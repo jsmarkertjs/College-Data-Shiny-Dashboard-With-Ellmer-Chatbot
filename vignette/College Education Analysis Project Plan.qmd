@@ -85,29 +85,23 @@ The user first filters the app by a specific school or by institutional categori
 
 ## Part 4: Ethical Review
 
-The *College Cost & Completion* project requires our group to handle college education data responsibly throughout every stage of its life cycle. We are using public and de-identified datasets from the **Institute of Education Sciences (IES)** that describe tuition costs, graduation rates, and financial aid amounts for U.S. colleges between 2013 and 2023. Even though the data do not contain personal information, we are still guided by ethical standards to make sure everything is collected, analyzed, and shared accurately and fairly.
+The *College Cost & Completion* project requires our group to responsibly handle college education data throughout its life cycle. We use public, de-identified data sets from the **Institute of Education Sciences (IES)** that include tuition, financial aid, and graduation rate data from 2013-2023. Although the data contain no personal identifiers, we follow clear ethical standards to ensure our analysis remains accurate, transparent, and fair.
 
 ### Data Life Cycle and Ethical Responsibility
 
-Ethics apply to the entire data life cycle, from how we collect and prepare the data to how we visualize and report it. During the **data collection and preparation stage**, we make sure our sources are public and approved for use. Because the IES data include large national datasets, there is very little risk of identifying individual students. Still, we are careful when combining and cleaning data to prevent mistakes that could change or misrepresent the results.
+Across each phase, collection, cleaning, analysis, and reporting, we maintain fairness, accuracy, and transparency. Because the data show patterns tied to race, gender, and institution type, we interpret results cautiously. We avoid overstating cause and effect and aim to present the data clearly. All visualizations will be labeled with context to prevent misinterpretation or bias.
 
-During the **data analysis stage**, we focus on accuracy, fairness, and transparency. Our study looks at the relationship between financial aid, tuition, and graduation rates, including breakdowns by race, gender, and institution type. We understand that data like this can be sensitive because it reflects real inequalities in access to education. To stay ethical, we interpret the results carefully and avoid exaggerating any connection between tuition and outcomes. We do not assume causation unless supported by both data and literature, like the studies we reviewed from Loeb and Page (2000), Heil et al. (2014), and Hemelt and Marcotte (2011).
+### Professional Guidelines
 
-In the **visualization and reporting stages**, ethics mean showing results clearly and avoiding distortion of data. We include complete and honest representations of what our analysis shows. For example, when displaying differences between universities or demographics, we will clearly explain what the data measure and what they do not. We also will label all charts so users understand any trends or gaps without reading incorrect conclusions into them.
-
-### Following Professional Guidelines
-
-Our group aligns its ethical practices with the **ACM Code of Ethics**, which focuses on honesty, responsibility, and respect for data subjects. The code emphasizes that computing professionals must "avoid harm" and "be fair and take action not to discriminate." These principles apply directly to our project. We make sure that our visualizations and data summaries do not reinforce stereotypes or suggest biased interpretations based on race, gender, or institution type.
-
-In addition, the **American Statistical Association (ASA)** code highlights accuracy, transparency, and integrity in statistical work. Following these principles, we commit to reporting our data sources, explaining our methods, and recognizing uncertainty. We will describe correlation values clearly and include context about statistical limits to keep the results honest and trustworthy.
+Our work follows the **ACM Code of Ethics**, which emphasizes honesty, responsibility, and fairness. We also use the **American Statistical Association (ASA)** guidelines to promote transparency and integrity in all statistical practices. This includes citing sources, explaining methods clearly, and acknowledging uncertainty in our findings.
 
 ### Collaboration and Integrity
 
-Ethical conduct also applies to our group’s collaboration process. Using GitHub ensures that all team members’ contributions are tracked and reviewed before merging into the main branch. This transparent process prevents lost code, conflicting updates, or unapproved changes. Each team member is responsible for maintaining data accuracy, writing clean code, and regularly communicating with others. These steps contribute to ethical teamwork by keeping our process open, well-documented, and accountable.
+We use GitHub for version control to ensure that all team changes are logged and reviewed before merging with the main branch. Each team member is responsible for communication, accuracy, and documentation. This promotes fairness, team accountability, and ethical collaboration.
 
 ### Conclusion
 
-Ethics are central to every part of the *College Cost & Completion* project, from collecting data responsibly to presenting fair, clear, and accurate findings. By following the **ACM Code of Ethics** and **ASA guidelines**, our team ensures that this analysis serves both academic and public interests while respecting honesty, fairness, and accuracy at every stage of the project’s life cycle.
+By following the **ACM** and **ASA** ethical principles, our team ensures that this project stays fair and transparent from start to finish, collecting, analyzing, and presenting college data responsibly to serve academic and public research goals.
 
 ## Part 5: App Concept
 
