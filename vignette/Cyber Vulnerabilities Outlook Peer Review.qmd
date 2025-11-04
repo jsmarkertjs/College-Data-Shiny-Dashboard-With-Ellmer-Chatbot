@@ -1,0 +1,31 @@
+---
+title: "Cyber Vulnerabilities Outlook Peer Review"
+format: html
+editor: visual
+---
+
+**Peer Reviewing Group: Jack Markert, Shae Ramberg, Jon Cote, John Dye, Camden Egan**
+
+**Peer Reviewed Group: Margaret Norten, Elizabeth-Lynda Nartey, Sarah Fisher, Alyssa Langmeyer**
+
+**Peer Review of Project Plan: Cyber Vulnerabilities Outlook**
+
+1\. Overall Impression
+
+We thought that this is a well-conceived and highly relevant project plan that addresses a critical need for national security analysts. The project has a clear definition of the user, the problem, and its logical approach to analysis. The choice of the CISA KEV, NIST NVD, and Shodan data sources is appropriate for the task and should give all the needed information to analyze the problem.
+
+2\. Workflow and Layout Analysis. 
+
+We found the proposed user workflow to be logical and well-structured, directly addressing the key questions an analyst would have. The flow from a general introduction tab on tab 1 to broad visualization on tab 2, and finally to statistical modeling on tab 3 mirrors a standard analytical process. The workflow is reasonable and easy to follow and allows an analyst to start with a high-level query using the map filters, and then pivot to the “why-how” questions (e.g., “What factors correlate with high severity in this region?”) using the statistical modeling tab. We also thought that the three-tab layout provides for a clean app and supports the workflow effectively. It helps to prevent an overload of information by separating the visualizations from the modelings and analysis. In addition, the use of sidebars to have a set of filters helps the user to narrow down their search and clearly see the results right alongside it. 
+
+3\. Recommendations
+
+While the plan is very strong, we identified a few recommendations for improvement to further enhance the app’s utility for its target actor. 
+
+The plan mentions “severity” and “concentration” of vulnerabilities. For a potential actor, the specific metric being visualized is important. Thus, it is unclear what the heat map may be plotting. Is it the count of all CVEs, the count of KEVs, or the average CVSS score. We thought that all of these metrics were important and would recommend a toggle/filter in tab 2 that allows the user to select the metric they want to visualize. For example, Count of KEVs vs. Average CVSS score. This makes the tool more flexible and allows the actor to customize their approach. 
+
+As we discussed in the meeting, the current plan may create some possible bias. A country with more comprehensive data reporting could mistakenly be seen as having more vulnerabilities than a country with less data, even if the latter simply isn't reporting its potentially higher security risks. We thought that finding a way to distinguish between high data volume and high vulnerability by normalization features, such as "vulnerabilities per capita" or another method to account for the size and visibility of a country’s data infrastructure is needed to prevent bias. Alternatively, acknowledging the potential of biased outcomes due to data reporting disparities at the beginning of the app could bring it to the attention of the actor if it cannot be controlled through normalization features. 
+
+4\. Conclusion 
+
+Overall, we found this project plan to be well constructed and present a complete idea for what your app will be. The problem faced in the plan is a very relevant one with many uses in today's world and could provide valuable insight into it. The clear user workflow and layout provide a solid foundation for the app and further help actors in the questions faced. 
