@@ -6,7 +6,31 @@ editor: visual
 
 ## Part 1: Admin
 
+College Education Analysis:
+
+DATA-613: Jon Cote
+
+DATA-413: Camden Egan, Jack Markert, John Dye, Shae Ramberg
+
 ## Part 2: Topic and Data Update
+
+#### Updates to Context, Problem, and Use Case:
+
+Our app's updated context now focuses on two primary user groups: students and their families, and institutional researchers. For students and families, we are building a tool to help them determine 'Best Value.' It will allow them to explore and filter schools by key metrics like tuition, median debt, and post-graduation earnings. From these variables, we will calculate and display a 'Best Value Index' (BVI), providing a clear way for students to compare their target schools. For researchers and administrators, we are providing an analytical tool to model student outcomes. This feature will allow them to analyze how institutional factors—such as admission rates, tuition, faculty salaries, and first-generation student populations—are statistically associated with graduation rates. Users can run this analysis on their own school or compare it against a custom-filtered group of peer institutions to better understand the impact of various policy levers.
+
+#### Updates to Literature Review #1:
+
+The Loeb & Page study provided in the first project plan provides a strong theoretical justification for our new problem for researchers when looking at how factors, specifically faculty salary in this case, is a predictor for graduation rates. While their study focused on K-12, its core principle is identical: investing in instructional quality (via competitive salaries) is directly linked to positive student outcomes. This review supports the hypothesis that a university's investment in faculty can have a measurable, positive association with student success, justifying its inclusion as a variable in our regression model. 
+
+#### Change to literature review #2: 
+
+Oreopoulos, Philip, and Uros Petronijevic. “Making college worth it: A review of research on the returns to Higher Education.” The Future of Children, vol. 23, no. 1, May 2013, pp. 41–65, https://doi.org/10.3386/w19053. 
+
+Making College Worth It: A Review of the Returns to Higher Education” by Philip Oreopoulos and Uros Petronijevic synthesizes research on the economic value of higher education. Although the authors affirm that college generally provides strong labor market returns, they emphasize that outcomes vary by student characteristics, academic pathways, and institutional quality. A central conclusion is that the earnings payoff to college remains large. Observational studies estimate that each year of four-year college raises annual earnings by 6–9%. However, the returns are not uniform. Major choice, occupation, and institutional selectivity significantly shape long-term earnings. While some studies detect limited differences across college quality, the broader literature indicates that more selective institutions tend to produce higher earnings. This question of the effects of selectivity and price on future earnings is key to our project as seen in our Best Value Index. Key variables across the reviewed studies include years of schooling, degree attainment, field of study, institutional selectivity, demographics, and earnings. The data sources span administrative state university records, national surveys, census data, and field experiments.
+
+#### Updates to Proposed Data Sources:
+
+Our data is a consolidated dataset drawn from the U.S. Department of Education's College Scorecard (2022-2023 academic year) and IPEDS, which provides institutional characteristics and graduation rates. To ensure a focused and relevant analysis, we have filtered this data to include only 4-year, public or private non-profit institutions that are currently operating, not distance-education only, predominantly bachelor's-degree granting, and enroll more than 100 undergraduate students.
 
 ## Part 3: Ethical Review Update
 
@@ -16,7 +40,7 @@ Our project uses public, de-identified data to protect everyone’s privacy and 
 
 After further deliberation we have created a more detailed app design with more target actors in mind. The app will have four main tabs: an introduction tab (for explanations on the data and app purpose/use), a student tab, a researchers tab, and a full data table tab (to simply view/sort the full dataset). The bulk of our apps capabilities will be under our student tab and research tab.
 
-#### Student Tab: 
+#### Student Tab:
 
 The student tab will be targeted at students/parents looking to pick an undergraduate university and wanting to look at different variables of interest as well as the best value for each school. This student tab will consist of 3 sub-tabs, detailed below:
 
