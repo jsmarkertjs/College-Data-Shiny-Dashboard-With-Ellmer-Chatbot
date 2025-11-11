@@ -116,7 +116,7 @@ Users could misunderstand or misuse complex dashboard features, like the Best Va
 
 ## Part 7: Collaboration
 
--   Nov 11 – Nov 25: App Development (Build all "Student" and "Researcher" tabs)
+-   Nov 11 – Nov 25: App Development (Build all Student and Researcher tabs)
 
 -   Nov 25 – Dec 1: Final App Testing & UI Polishing
 
