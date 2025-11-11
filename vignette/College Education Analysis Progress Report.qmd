@@ -10,6 +10,8 @@ editor: visual
 
 ## Part 3: Ethical Review Update
 
+The College Cost & Completion project uses public, de-identified data to protect everyone’s privacy and make sure no one’s personal information is at risk. Our team is careful throughout every step, from collecting and cleaning data to showing results in charts and tables. We check for patterns related to race, gender, or school type and avoid making any claims that could be unfair or misleading. All results are clearly labeled and team members use GitHub to track and review changes so the process stays transparent and honest for everyone. We follow official codes like the ACM Code of Ethics and ASA guidelines, which say we should be accurate, responsible, and open about any uncertainty in our results. For example, our app shows how the Best Value Index is calculated and lets users check all the numbers used in the dashboard. We regularly review our process for any possible bias, and always protect privacy by keeping all data anonymous. By following these new rules and ethical principles, we help students and researchers make fair decisions, and keep the project trustworthy at every stage
+
 ## Part 4: App Design Update
 
 After further deliberation we have created a more detailed app design with more target actors in mind. The app will have four main tabs: an introduction tab (for explanations on the data and app purpose/use), a student tab, a researchers tab, and a full data table tab (to simply view/sort the full dataset). The bulk of our apps capabilities will be under our student tab and research tab.
@@ -23,5 +25,7 @@ Best Value Index: This sub-tab will solely focus on the variable of BVI (best va
 BVI Map: This sub-tab will show the BVI on an interactive map of the US. There will be no inputs for the user. The tab will contain a map of all colleges and their associated BVI score with dots colored by a scale associated with the BVI value. The actor can view the color distribution across the map and hover over each dot to view the name of the university and specific BVI associated with that point.
 
 ## Part 6: Risk Assessment
+
+Users could misunderstand or misuse complex dashboard features, like the Best Value Index or the statistical models. If this happens, they may get the wrong idea about colleges or student outcomes. To prevent confusion, the app provides clear labels, plain-language explanations, and tooltips explaining how calculations work. The team stays up to date with privacy rules, reviews every update for fairness and accuracy, and keeps documentation current to reduce communication issues close to the deadline. Working together closely and checking for bias or mistakes helps everyone use the dashboard responsibly. Another risk is trouble integrating and cleaning data from multiple sources. This could cause delays or lead to errors in results. To address this, the team has scheduled extra time for data cleaning, tracks all changes, and meets regularly to review data and find issues early. This careful approach helps fix problems before they affect the project and keeps the final results reliable for students and researchers.
 
 ## Part 7: Collaboration
