@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Group Project: Progress Report</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="College Education Analysis Progress Report_files/libs/clipboard/clipboard.min.js"></script>
+<script src="College Education Analysis Progress Report_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="College Education Analysis Progress Report_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="College Education Analysis Progress Report_files/libs/quarto-html/popper.min.js"></script>
+<script src="College Education Analysis Progress Report_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="College Education Analysis Progress Report_files/libs/quarto-html/anchor.min.js"></script>
+<link href="College Education Analysis Progress Report_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="College Education Analysis Progress Report_files/libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="College Education Analysis Progress Report_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="College Education Analysis Progress Report_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="College Education Analysis Progress Report_files/libs/bootstrap/bootstrap-bb462d781dde1847d9e3ccf7736099dd.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent quarto-light">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Group Project: Progress Report</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="part-1-admin" class="level2">
+<h2 class="anchored" data-anchor-id="part-1-admin">Part 1: Admin</h2>
+<p>College Education Analysis:</p>
+<p>DATA-613: Jon Cote</p>
+<p>DATA-413: Camden Egan, Jack Markert, John Dye, Shae Ramberg</p>
+</section>
+<section id="part-2-topic-and-data-update" class="level2">
+<h2 class="anchored" data-anchor-id="part-2-topic-and-data-update">Part 2: Topic and Data Update</h2>
+<section id="updates-to-context-problem-and-use-case" class="level4">
+<h4 class="anchored" data-anchor-id="updates-to-context-problem-and-use-case">Updates to Context, Problem, and Use Case:</h4>
+<p>Our app’s updated context now focuses on two primary user groups: students and their families, and institutional researchers. For students and families, we are building a tool to help them determine ‘Best Value.’ It will allow them to explore and filter schools by key metrics like tuition, median debt, and post-graduation earnings. From these variables, we will calculate and display a ‘Best Value Index’ (BVI), providing a clear way for students to compare their target schools. For researchers and administrators, we are providing an analytical tool to model student outcomes. This feature will allow them to analyze how institutional factors—such as admission rates, tuition, faculty salaries, and first-generation student populations—are statistically associated with graduation rates. Users can run this analysis on their own school or compare it against a custom-filtered group of peer institutions to better understand the impact of various policy levers.</p>
+</section>
+<section id="updates-to-literature-review-1" class="level4">
+<h4 class="anchored" data-anchor-id="updates-to-literature-review-1">Updates to Literature Review #1:</h4>
+<p>The Loeb &amp; Page study provided in the first project plan provides a strong theoretical justification for our new problem for researchers when looking at how factors, specifically faculty salary in this case, is a predictor for graduation rates. While their study focused on K-12, its core principle is identical: investing in instructional quality (via competitive salaries) is directly linked to positive student outcomes. This review supports the hypothesis that a university’s investment in faculty can have a measurable, positive association with student success, justifying its inclusion as a variable in our regression model.&nbsp;</p>
+</section>
+<section id="change-to-literature-review-2" class="level4">
+<h4 class="anchored" data-anchor-id="change-to-literature-review-2">Change to literature review #2:&nbsp;</h4>
+<p>Oreopoulos, Philip, and Uros Petronijevic. “Making college worth it: A review of research on the returns to Higher Education.” The Future of Children, vol.&nbsp;23, no. 1, May 2013, pp.&nbsp;41–65, https://doi.org/10.3386/w19053.&nbsp;</p>
+<p>Making College Worth It: A Review of the Returns to Higher Education” by Philip Oreopoulos and Uros Petronijevic synthesizes research on the economic value of higher education. Although the authors affirm that college generally provides strong labor market returns, they emphasize that outcomes vary by student characteristics, academic pathways, and institutional quality. A central conclusion is that the earnings payoff to college remains large. Observational studies estimate that each year of four-year college raises annual earnings by 6–9%. However, the returns are not uniform. Major choice, occupation, and institutional selectivity significantly shape long-term earnings. While some studies detect limited differences across college quality, the broader literature indicates that more selective institutions tend to produce higher earnings. This question of the effects of selectivity and price on future earnings is key to our project as seen in our Best Value Index. Key variables across the reviewed studies include years of schooling, degree attainment, field of study, institutional selectivity, demographics, and earnings. The data sources span administrative state university records, national surveys, census data, and field experiments.</p>
+</section>
+<section id="updates-to-proposed-data-sources" class="level4">
+<h4 class="anchored" data-anchor-id="updates-to-proposed-data-sources">Updates to Proposed Data Sources:</h4>
+<p>Our data is a consolidated dataset drawn from the U.S. Department of Education’s College Scorecard (2022-2023 academic year) and IPEDS, which provides institutional characteristics and graduation rates. To ensure a focused and relevant analysis, we have filtered this data to include only 4-year, public or private non-profit institutions that are currently operating, not distance-education only, predominantly bachelor’s-degree granting, and enroll more than 100 undergraduate students.</p>
+</section>
+</section>
+<section id="part-3-ethical-review-update" class="level2">
+<h2 class="anchored" data-anchor-id="part-3-ethical-review-update">Part 3: Ethical Review Update</h2>
+<p>Our project uses public, de-identified data to protect everyone’s privacy and make sure no one’s personal information is at risk. Our team is careful throughout every step, from collecting and cleaning data to showing results in charts and tables. We check for patterns related to race, gender, or school type and avoid making any claims that could be unfair or misleading. All results are clearly labeled and team members use GitHub to track and review changes so the process stays transparent and honest for everyone. We follow official codes like the ACM Code of Ethics and ASA guidelines, which say we should be accurate, responsible, and open about any uncertainty in our results. For example, our app shows how the Best Value Index is calculated and lets users check all the numbers used in the dashboard. We regularly review our process for any possible bias, and always protect privacy by keeping all data anonymous. By following these new rules and ethical principles, we help students and researchers make fair decisions, and keep the project trustworthy at every stage</p>
+</section>
+<section id="part-4-app-design-update" class="level2">
+<h2 class="anchored" data-anchor-id="part-4-app-design-update">Part 4: App Design Update</h2>
+<p>After further deliberation we have created a more detailed app design with more target actors in mind. The app will have four main tabs: an introduction tab (for explanations on the data and app purpose/use), a student tab, a researchers tab, and a full data table tab (to simply view/sort the full dataset). The bulk of our apps capabilities will be under our student tab and research tab.</p>
+<section id="student-tab" class="level4">
+<h4 class="anchored" data-anchor-id="student-tab">Student Tab:</h4>
+<p>The student tab will be targeted at students/parents looking to pick an undergraduate university and wanting to look at different variables of interest as well as the best value for each school. This student tab will consist of 3 sub-tabs, detailed below:</p>
+<p>Single Variable Exploration: This sub-tab will allow students/parents to look directly at data for their desired schools and choose from many variables that interest them. They will input one variable of interest which will contain options including tuition, religious affiliation, degree of urbanization, and median earning 10 years after graduation. They will then have the option to select from multiple filters including state, public/private, HBCU, and simply name search to select individual schools. Due to the many optional filters we will use a render/calculate button that can be clicked to produce the output once the actor has filtered and selected their variable of interest. This tab will then output a dataframe including all the colleges under the selected criteria next to the column for the variable of interest. If the variable of interest is numeric (and contains more than one row) it will also output a sentence on what the average of that variable is among colleges selected. Additionally if the variable of interest is categorical and contains more than one row, we will output a bar graph showing the distribution of counts for each class.</p>
+<p>Best Value Index: This sub-tab will solely focus on the variable of BVI (best value index) which will be calculated using tuition, debt, and income 10 years after graduation. The actor will be given the same filters from the Single Variable Exploration sub-tab, and will output a table of the selected/filtered colleges with the BVI value in the next column. There will also be a printed sentence on the average BVI of the colleges selected (if more than one), and a note on what we define BVI as and how it is calculated.</p>
+<p>BVI Map: This sub-tab will show the BVI on an interactive map of the US. There will be no inputs for the user. The tab will contain a map of all colleges and their associated BVI score with dots colored by a scale associated with the BVI value. The actor can view the color distribution across the map and hover over each dot to view the name of the university and specific BVI associated with that point.</p>
+</section>
+<section id="researcher-tab" class="level4">
+<h4 class="anchored" data-anchor-id="researcher-tab">Researcher Tab:</h4>
+<p>The research tab will be targeted at researchers, administrators, and policy-makers, allowing them to interactively explore and analyze variables that influence student outcomes. This research tab will consist of 3 sub-tabs, detailed below:</p>
+<p>Single Variable Exploration: This sub-tab will focus on single-variable exploration. Users can select a numeric variable (such as tuition, endowment, or average faculty salary) and then apply filters (such as region and others) to view a histogram showing that variable’s distribution and its mean value.</p>
+<p>Multi-Variable Analysis: This sub-tab will support multi-variable analysis. It will enable users to visualize relationships between two quantitative variables using scatterplots and to conduct statistical tests—such as a t-test for two groups or ANOVA when comparing three or more—to assess whether observed differences between groups are significant.</p>
+<p>Model Testing: This sub-tab will feature a model testing tool. Users can select graduation rate as the response variable and choose from several predictor variables (such as tuition, median student debt, median earnings, admission rate, total cost, endowment, and faculty salary) to build and display a regression model.</p>
+</section>
+</section>
+<section id="part-5-demonstration-outline-and-responsibilities" class="level2">
+<h2 class="anchored" data-anchor-id="part-5-demonstration-outline-and-responsibilities">Part 5: Demonstration Outline and Responsibilities</h2>
+<ul>
+<li><p>1. Intro &amp; Context (Jack, 2 min)</p>
+<ul>
+<li><p>Problem: Choosing colleges is hard; understanding success drivers is complex.</p></li>
+<li><p>Users: (1) Students/Families, (2) Researchers/Admins.</p></li>
+<li><p>Use Case: We will demonstrate both personas.</p></li>
+</ul></li>
+<li><p>2. Data Sources (John, 1 min)</p>
+<ul>
+<li><p><em>Show “Data” Tab</em>. Sources: College Scorecard (2022-23) &amp; IPEDS.</p></li>
+<li><p>Cleaning: Filtered to 4-year, non-profit, &gt;100 undergrads, operating.</p></li>
+<li><p>Limitation: Focuses on traditional undergraduate institutions.</p></li>
+</ul></li>
+<li><p>3. EDA Workflow (Student) (Shae, 5 min)</p>
+<ul>
+<li><p><em>Go to “Student Tab”.</em> Scenario: Find a high-value public school in the Northeast.</p></li>
+<li><p>Tab 1 (Single Var): Filter for ‘Median Earnings’ &amp; ‘Public’/‘Northeast’.</p></li>
+<li><p>Tab 2 (Best Value): Keep filters, review BVI score (Tuition/Debt/Earnings).</p></li>
+<li><p>Tab 3 (Map): Hover to see school names and BVI scores.</p></li>
+</ul></li>
+<li><p>4. Modeling Workflow (Researcher) (Camden, 5 min)</p>
+<ul>
+<li><p><em>Go to “Research Tab”.</em> Scenario: How do tuition and faculty pay relate to graduation rates?</p></li>
+<li><p>Tab 3 (Model Testing):</p>
+<ul>
+<li><p>Response (Y): <code>Graduation Rate</code>.</p></li>
+<li><p>Predictors (X): <code>Tuition</code>, <code>Admission Rate</code>, <code>Average Faculty Salary</code>.</p></li>
+</ul></li>
+<li><p><em>Run Model</em>. Interpret: “R-squared shows model fit. The coefficient for ‘Tuition’ is negative, while ‘Faculty Salary’ is positive, showing their association with grad rates.”</p></li>
+</ul></li>
+<li><p>5. Summation (Jon, 2 min)</p>
+<ul>
+<li><p>Recap: Showed two distinct workflows:</p>
+<ul>
+<li><p>Student: A prescriptive tool to find a “Best Value” school.</p></li>
+<li><p>Researcher: An analytical tool to model policy trade-offs.</p></li>
+</ul></li>
+<li><p>Conclusion: The app bridges the gap between simple lookup and complex analysis. Q&amp;A.<br>
+</p></li>
+</ul></li>
+</ul>
+</section>
+<section id="part-6-risk-assessment" class="level2">
+<h2 class="anchored" data-anchor-id="part-6-risk-assessment">Part 6: Risk Assessment</h2>
+<p>Users could misunderstand or misuse complex dashboard features, like the Best Value Index or the statistical models. If this happens, they may get the wrong idea about colleges or student outcomes. To prevent confusion, the app provides clear labels, plain-language explanations, and tooltips explaining how calculations work. We will stay up to date with privacy rules, reviews every update for fairness and accuracy, and keeps documentation current to reduce communication issues close to the deadline. Working together closely and checking for bias or mistakes helps everyone use the dashboard responsibly. Another risk is trouble integrating and cleaning data from multiple sources. This could cause delays or lead to errors in results. To address this, we have scheduled extra time for data cleaning, tracks all changes, and meets regularly to review data and find issues early. This careful approach helps fix problems before they affect the project and keeps the final results reliable for students and researchers.</p>
+</section>
+<section id="part-7-collaboration" class="level2">
+<h2 class="anchored" data-anchor-id="part-7-collaboration">Part 7: Collaboration</h2>
+<ul>
+<li><p>Nov 11 – Nov 25: App Development (Build all Student and Researcher tabs)</p></li>
+<li><p>Nov 25 – Dec 1: Final App Testing &amp; UI Polishing</p></li>
+<li><p>Dec 1: Code Cutoff</p></li>
+<li><p>Dec 2 – Dec 4: Produce Vignette</p></li>
+<li><p>Dec 6-9: Rehearsal of Demonstration</p></li>
+<li><p>Dec 9: Final Delivery (Shiny App, Vignette, &amp; Demonstration)</p></li>
+</ul>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
