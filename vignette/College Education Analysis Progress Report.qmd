@@ -52,8 +52,78 @@ BVI Map: This sub-tab will show the BVI on an interactive map of the US. There w
 
 #### Researcher Tab:
 
+The research tab will be targeted at researchers, administrators, and policy-makers, allowing them to interactively explore and analyze variables that influence student outcomes. This research tab will consist of 3 sub-tabs, detailed below:
+
+Single Variable Exploration: This sub-tab will focus on single-variable exploration. Users can select a numeric variable (such as tuition, endowment, or average faculty salary) and then apply filters (such as region and others) to view a histogram showing that variable's distribution and its mean value.
+
+Multi-Variable Analysis: This sub-tab will support multi-variable analysis. It will enable users to visualize relationships between two quantitative variables using scatterplots and to conduct statistical tests—such as a t-test for two groups or ANOVA when comparing three or more—to assess whether observed differences between groups are significant.
+
+Model Testing: This sub-tab will feature a model testing tool. Users can select graduation rate as the response variable and choose from several predictor variables (such as tuition, median student debt, median earnings, admission rate, total cost, endowment, and faculty salary) to build and display a regression model.
+
+## Part 5: Demonstration Outline and Responsibilities
+
+-   1\. Intro & Context (Jack, 2 min)
+
+    -   Problem: Choosing colleges is hard; understanding success drivers is complex.
+
+    -   Users: (1) Students/Families, (2) Researchers/Admins.
+
+    -   Use Case: We will demonstrate both personas.
+
+-   2\. Data Sources (John, 1 min)
+
+    -   *Show "Data" Tab*. Sources: College Scorecard (2022-23) & IPEDS.
+
+    -   Cleaning: Filtered to 4-year, non-profit, \>100 undergrads, operating.
+
+    -   Limitation: Focuses on traditional undergraduate institutions.
+
+-   3\. EDA Workflow (Student) (Shae, 5 min)
+
+    -   *Go to "Student Tab".* Scenario: Find a high-value public school in the Northeast.
+
+    -   Tab 1 (Single Var): Filter for 'Median Earnings' & 'Public'/'Northeast'.
+
+    -   Tab 2 (Best Value): Keep filters, review BVI score (Tuition/Debt/Earnings).
+
+    -   Tab 3 (Map): Hover to see school names and BVI scores.
+
+-   4\. Modeling Workflow (Researcher) (Camden, 5 min)
+
+    -   *Go to "Research Tab".* Scenario: How do tuition and faculty pay relate to graduation rates?
+
+    -   Tab 3 (Model Testing):
+
+        -   Response (Y): `Graduation Rate`.
+
+        -   Predictors (X): `Tuition`, `Admission Rate`, `Average Faculty Salary`.
+
+    -   *Run Model*. Interpret: "R-squared shows model fit. The coefficient for 'Tuition' is negative, while 'Faculty Salary' is positive, showing their association with grad rates."
+
+-   5\. Summation (Jon, 2 min)
+
+    -   Recap: Showed two distinct workflows:
+
+        -   Student: A prescriptive tool to find a "Best Value" school.
+
+        -   Researcher: An analytical tool to model policy trade-offs.
+
+    -   Conclusion: The app bridges the gap between simple lookup and complex analysis. Q&A.\
+
 ## Part 6: Risk Assessment
 
 Users could misunderstand or misuse complex dashboard features, like the Best Value Index or the statistical models. If this happens, they may get the wrong idea about colleges or student outcomes. To prevent confusion, the app provides clear labels, plain-language explanations, and tooltips explaining how calculations work. We will stay up to date with privacy rules, reviews every update for fairness and accuracy, and keeps documentation current to reduce communication issues close to the deadline. Working together closely and checking for bias or mistakes helps everyone use the dashboard responsibly. Another risk is trouble integrating and cleaning data from multiple sources. This could cause delays or lead to errors in results. To address this, we have scheduled extra time for data cleaning, tracks all changes, and meets regularly to review data and find issues early. This careful approach helps fix problems before they affect the project and keeps the final results reliable for students and researchers.
 
 ## Part 7: Collaboration
+
+-   Nov 11 – Nov 25: App Development (Build all "Student" and "Researcher" tabs)
+
+-   Nov 25 – Dec 1: Final App Testing & UI Polishing
+
+-   Dec 1: Code Cutoff
+
+-   Dec 2 – Dec 4: Produce Vignette
+
+-   Dec 6-9: Rehearsal of Demonstration
+
+-   Dec 9: Final Delivery (Shiny App, Vignette, & Demonstration)
