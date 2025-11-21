@@ -290,7 +290,7 @@ server <- function(input, output, session) {
       addCircleMarkers(
         lng = ~LONGITUDE,
         lat = ~LATITUDE,
-        radius = 5,
+        radius = 5, 
         color = "navy",
         stroke = FALSE,
         fillOpacity = 0.7,
