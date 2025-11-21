@@ -2,7 +2,7 @@
 library(shiny)
 library(readr)
 library(dplyr)
-
+library(leaflet)
 
 full_data<-read_csv("./data/college_scorecard_clean_ug.csv")
 full_data |> 
@@ -112,11 +112,20 @@ ui <- navbarPage(
                       # Add stuff for sub-tab here
              ),
              
-             # Sub-tab 2c
              tabPanel("Map",
-                      h3("Map"),
-                      p("Content here.")
-                      # Add map output here
+                      sidebarLayout(
+                        sidebarPanel(
+                          h3("Map Filters"),
+                          # Input for selecting the Region
+                          selectInput("mapRegion", "Select Region:", 
+                                      choices = sort(unique(full_data$`Bureau of Economic Analysis (BEA) regions`)),
+                                      selected = sort(unique(full_data$`Bureau of Economic Analysis (BEA) regions`))[1])
+                        ),
+                        mainPanel(
+                          # The output for the leaflet map
+                          leafletOutput("collegeMap", height = "600px")
+                        )
+                      )
              )
            )
   ),
@@ -159,8 +168,6 @@ ui <- navbarPage(
 
 
 # --- Define the Server Logic ---
-# The server is where all the calculations and plot/table generation happens.
-# For now, it's empty because we are just building the layout.
 server <- function(input, output, session) {
   
   # Server logic for 'Students and Parents' tab...
@@ -241,6 +248,34 @@ server <- function(input, output, session) {
     head(filt_st_data()) 
   })
   
+  # --- Server Logic for Map (Sub-tab 2c) ---
+  
+  # 1. Create a reactive dataset for the map that filters by Region
+  map_data <- reactive({
+    # Filter full_data based on the selected region from the dropdown
+    full_data |> 
+      filter(`Bureau of Economic Analysis (BEA) regions` == input$mapRegion)
+  })
+  
+  # 3. Render the Leaflet Map
+  output$collegeMap <- renderLeaflet({
+    # Use the reactive data (map_data())
+    leaflet(data = map_data()) |> 
+      addTiles() |>  # 
+      addCircleMarkers(
+        lng = ~LONGITUDE,
+        lat = ~LATITUDE,
+        radius = 5,
+        color = "navy",
+        stroke = FALSE,
+        fillOpacity = 0.7,
+        popup = ~paste0(
+          "<b>", INSTNM, "</b><br>",
+          "Admission Rate: ", round(ADM_RATE, 1), "%<br>",
+          "Average SAT: ", SAT_AVG
+        )
+      )
+  })
   
   # Server logic for 'Researchers and Administrators' tab...
   
