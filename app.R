@@ -4,7 +4,7 @@ library(readr)
 library(dplyr)
 library(leaflet)
 
-full_data<-read_csv("./data/college_scorecard_clean_ug.csv")
+full_data<-read_csv("./data/college_scorecard_11-21.csv")
 full_data |> 
   mutate(ADM_RATE=ADM_RATE*100) |> 
   mutate(UGDS_ASIAN=UGDS_ASIAN*100) |> 
