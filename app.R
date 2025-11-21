@@ -17,7 +17,7 @@ full_data |>
 ui <- navbarPage(
   title = "College Education Analysis",
  
-  #INSERT THEME HERE
+  #INSERT THEME HERE 
   
   # --- Main Tab 1: Intro ---
   tabPanel("Intro",
