@@ -16,8 +16,22 @@ full_data |>
   mutate(FIRST_GEN=FIRST_GEN*100)->full_data
 
 
-
-
+#BVI
+#A higher BVI indicates a more favorable cost-benefit ratio, suggesting that the college 
+#offers high earning potential relative to its price tag and debt load.
+full_data <- full_data |>
+  mutate(
+    # Create a single 'NET_COST' column based on the institution's control
+    # CONTROL: 1 = Public, 2 = Private nonprofit, 3 = Private for-profit
+    NET_COST = case_when(
+      CONTROL == 1 ~ NPT4_PUB,
+      CONTROL %in% c(2, 3) ~ NPT4_PRIV,
+      TRUE ~ NA_real_ # Use NA if CONTROL is missing or unexpected
+    ),
+    
+    # Create BVI column
+    Best_Value_Index = round(MD_EARN_WNE_P10 / (NET_COST + GRAD_DEBT_MDN), 3)
+  )
 
 
 
@@ -283,7 +297,8 @@ server <- function(input, output, session) {
         popup = ~paste0(
           "<b>", INSTNM, "</b><br>",
           "Admission Rate: ", round(ADM_RATE, 1), "%<br>",
-          "Average SAT: ", SAT_AVG
+          "Average SAT: ", SAT_AVG, "<br>",
+          "Best Value Index: ", Best_Value_Index
         )
       )
   })
