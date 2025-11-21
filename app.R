@@ -393,16 +393,57 @@ server <- function(input, output, session) {
   options = list(pageLength=10)) #End of Student DF print
   
   #This outputs faceted graphs
-  output$st_plots<-renderPlot({
-    validate(need(nrow(filt_st_data()) > 1, "Graphing requires more than one College. Please widen your search. "))
-    filt_data<-filt_st_data()[, -1]
-    var1<-sym(colnames(filt_data)[1])
-    if(ncol(filt_data) == 1){
-      st_plot_final<-ggplot(filt_data, aes(x=!!var1))+
-        geom_point()
-    }
-    st_plot_final
+  output$st_plots <- renderPlot({
+    req(nrow(filt_st_data()) > 0)
+
     
+    # drop inst name
+    plot_df <- filt_st_data() |> select(-INSTNM)
+    
+    # separate num vs cat
+    num_cols <- names(which(sapply(plot_df, is.numeric)))
+    cat_cols <- names(which(!sapply(plot_df, is.numeric)))
+    
+    # list of plots
+    plot_list <- list()
+    
+    #numeric hist
+    if(length(num_cols) > 0) {
+      # Pivot the numeric columns
+      df_num <- plot_df |> 
+        select(all_of(num_cols)) |>
+        pivot_longer(cols = everything(), names_to = "Variable", values_to = "Value")
+      
+      p1 <- ggplot(df_num, aes(x = Value)) +
+        geom_histogram(fill = "steelblue", color = "white", bins = 30) +
+        facet_wrap(~Variable, scales = "free", ncol = 2) +
+        theme_minimal() +
+        labs(y = "Count", x = NULL)
+      
+      plot_list[[length(plot_list) + 1]] <- p1
+    }
+    
+    # categorical plots
+    if(length(cat_cols) > 0) {
+      # Pivot  the categorical columns
+      df_cat <- plot_df |> 
+        select(all_of(cat_cols)) |>
+        mutate(across(everything(), as.character)) |>
+        pivot_longer(cols = everything(), names_to = "Variable", values_to = "Value")
+      
+      p2 <- ggplot(df_cat, aes(x = Value)) +
+        geom_bar(fill = "darkgreen") +
+        facet_wrap(~Variable, scales = "free", ncol = 2) +
+        coord_flip() + # Flips text to be readable
+        theme_minimal() +
+        labs(y = "Count", x = NULL)
+      
+      plot_list[[length(plot_list) + 1]] <- p2
+    }
+    # combine plots
+    if(length(plot_list) > 0) {
+      gridExtra::grid.arrange(grobs = plot_list, ncol = 1)
+    }
   }) # End of Student Plots
   
   # --- Server Logic for Map (Sub-tab 2c) ---
