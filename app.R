@@ -1,4 +1,3 @@
-
 library(shiny)
 library(readr)
 library(dplyr)
@@ -20,15 +19,30 @@ full_data |>
   mutate(FEMALE=FEMALE*100) |> 
   mutate(FIRST_GEN=FIRST_GEN*100)->full_data
 
+#Renaming Map (New Name = Old Name)
+rename_map <- c(
+  "Admission Rate" = "ADM_RATE",
+  "Median Earnings After 10 Years" = "MD_EARN_WNE_P10",
+  "Tuition (In-state)" = "TUITIONFEE_IN",
+  "Tuition (Out-of-state)" = "TUITIONFEE_OUT",
+  "Median Debt at Graduation" = "GRAD_DEBT_MDN",
+  "Average SAT" = "SAT_AVG",
+  "Average Cost (In-state)" = "NPT4_PUB",
+  "Average Cost (Out-of-state)" = "NPT4_PRIV",
+  "Urbanization" = "urbanization",
+  "Religion" = "religion"
+)
+
 states<-sort(full_data$"State abbreviation")
 regions<-full_data$"Bureau of Economic Analysis (BEA) regions"
-religion_choices<-sort(full_data$religion)
-urbanization_choices<-full_data$urbanization
-school_choices<-full_data$INSTNM
+religion_choices<-sort(unique(full_data$religion))
+urbanization_choices<-sort(unique(full_data$urbanization))
+school_choices<-sort(unique(full_data$INSTNM))
+variable_choices<-names(rename_map)
 
 student_variable_dataset<-full_data |> 
-  select(ADM_RATE, GRAD_DEBT_MDN, MD_EARN_WNE_P10, SAT_AVG, TUITIONFEE_IN, 
-         TUITIONFEE_OUT, NPT4_PUB, NPT4_PRIV, urbanization, religion)
+  rename(any_of(rename_map)) |> 
+  select(names(rename_map))
 
 
 #BVI
@@ -56,7 +70,7 @@ full_data <- full_data |>
 
 ui <- navbarPage(
   title = "College Education Analysis",
- 
+  
   #INSERT THEME HERE 
   
   # --- Main Tab 1: Intro ---
@@ -80,9 +94,9 @@ ui <- navbarPage(
                       sidebarLayout(
                         sidebarPanel(
                           h3("Variable(s) of Interest"),
-                          varSelectInput("selected_vars", "Select Variable(s):",
-                                         data=student_variable_dataset, 
-                                         multiple = TRUE, selected="ADM_RATE"),
+                          selectInput("selected_vars", "Select Variable(s):",
+                                      choices=variable_choices, 
+                                      multiple = TRUE, selected="Admission Rate"),
                           
                           
                           h3("School Filtering"),
@@ -193,17 +207,17 @@ ui <- navbarPage(
                           )
                         ), #End of sidebar Panel Student Exporatory Section
                         mainPanel(
-                      
-                      
-                      h4("Variable Exploration"),
-                      h5("Filtered Colleges with Variable(s) of Interest:"),
-                      DTOutput("st_df"),
-                      h5("Graphs of Variables of Interest:"),
-                      plotOutput("st_plots")
-                      
-                      # Add stuff for sub-tab here
+                          
+                          
+                          h4("Variable Exploration"),
+                          h5("Filtered Colleges with Variable(s) of Interest:"),
+                          DTOutput("st_df"),
+                          h5("Graphs of Variables of Interest:"),
+                          plotOutput("st_plots")
+                          
+                          # Add stuff for sub-tab here
                         ), #End up Main Panel Student Exploratory Section
-             )),
+                      )),
              
              
              
@@ -275,7 +289,7 @@ server <- function(input, output, session) {
   
   # Server logic for 'Students and Parents' tab...
   ##Exploratory Analysis sub-tab:
-           #This section creates a reactive df of the student's filters
+  #This section creates a reactive df of the student's filters
   
   filt_st_data<-reactive({
     #White
@@ -284,7 +298,7 @@ server <- function(input, output, session) {
       max_w<-input$filterRaceWhite[2]
       full_data |> 
         filter(PCT_WHITE>= min_w & 
-               PCT_WHITE<= max_w)->full_data
+                 PCT_WHITE<= max_w)->full_data
     }
     #Asian
     if(input$showRaceAsian == TRUE){
@@ -378,12 +392,17 @@ server <- function(input, output, session) {
       full_data |> 
         filter(urbanization %in% sel_urb)->full_data
     }
+    
+    #RENAME COLUMNS
+    full_data |> 
+      rename(any_of(rename_map))->full_data
+    
     selected_vars_stud<-as.character(input$selected_vars)
     full_data<-full_data |> 
       select(INSTNM, all_of(selected_vars_stud))
     
     return(full_data)
-    })# End of reactive df
+  })# End of reactive df
   
   #This outputs the data table that the student selects
   output$st_df<-renderDT({
@@ -395,7 +414,7 @@ server <- function(input, output, session) {
   #This outputs faceted graphs
   output$st_plots <- renderPlot({
     req(nrow(filt_st_data()) > 0)
-
+    
     
     # drop inst name
     plot_df <- filt_st_data() |> select(-INSTNM)
