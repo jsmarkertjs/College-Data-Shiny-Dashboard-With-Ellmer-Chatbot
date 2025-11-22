@@ -415,6 +415,9 @@ server <- function(input, output, session) {
   output$st_plots <- renderPlot({
     req(nrow(filt_st_data()) > 0)
     
+    # 1. Grab highlight data BEFORE dropping INSTNM
+    high_df <- filt_st_data() |> 
+      filter(INSTNM %in% input$highlightSchool)
     
     # drop inst name
     plot_df <- filt_st_data() |> select(-INSTNM)
@@ -439,6 +442,17 @@ server <- function(input, output, session) {
         theme_minimal() +
         labs(y = "Count", x = NULL)
       
+      # Add vertical line for highlights if they exist
+      if(nrow(high_df) > 0) {
+        high_num <- high_df |> 
+          select(INSTNM, all_of(num_cols)) |>
+          pivot_longer(cols = -INSTNM, names_to = "Variable", values_to = "Value")
+        
+        p1 <- p1 + geom_vline(data = high_num, 
+                              aes(xintercept = Value, color = INSTNM), 
+                              size = 1.2, show.legend = TRUE)
+      }
+      
       plot_list[[length(plot_list) + 1]] <- p1
     }
     
@@ -456,6 +470,19 @@ server <- function(input, output, session) {
         coord_flip() + # Flips text to be readable
         theme_minimal() +
         labs(y = "Count", x = NULL)
+      
+      # Add horizontal line (visually) for highlights if they exist
+      if(nrow(high_df) > 0) {
+        high_cat <- high_df |> 
+          select(INSTNM, all_of(cat_cols)) |>
+          mutate(across(-INSTNM, as.character)) |>
+          pivot_longer(cols = -INSTNM, names_to = "Variable", values_to = "Value")
+        
+        # Note: with coord_flip, geom_vline becomes horizontal visually
+        p2 <- p2 + geom_vline(data = high_cat, 
+                              aes(xintercept = Value, color = INSTNM), 
+                              size = 1.2, show.legend = TRUE)
+      }
       
       plot_list[[length(plot_list) + 1]] <- p2
     }
