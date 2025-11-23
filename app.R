@@ -224,9 +224,126 @@ ui <- navbarPage(
              
              # Sub-tab 2b
              tabPanel("Best Value Index",
-                      h3("Best Value Index"),
-                      p("Content here.")
-                      # Add stuff for sub-tab here
+                      sidebarLayout(
+                        sidebarPanel(
+                          h3("School Filtering (BVI)"),
+                          #Filtering by demographics: race, gender, firstgen
+                          h4("Demographics"),
+                          checkboxInput("bvi_showRaceWhite", "Filter by % White"),
+                          conditionalPanel(
+                            "input.bvi_showRaceWhite == true",
+                            sliderInput("bvi_filterRaceWhite", "Percent White", 
+                                        min = 0, max = 100, value = c(0, 100), post = "%")
+                          ),
+                          checkboxInput("bvi_showRaceAsian", "Filter by % Asian"),
+                          conditionalPanel(
+                            "input.bvi_showRaceAsian == true",
+                            sliderInput("bvi_filterRaceAsian", "Percent Asian", 
+                                        min = 0, max = 100, value = c(0, 100), post = "%")
+                          ),
+                          checkboxInput("bvi_showRaceBlack", "Filter by % Black"),
+                          conditionalPanel(
+                            "input.bvi_showRaceBlack == true",
+                            sliderInput("bvi_filterRaceBlack", "Percent Black", 
+                                        min = 0, max = 100, value = c(0, 100), post = "%")
+                          ),
+                          checkboxInput("bvi_showRaceHispanic", "Filter by % Hispanic"),
+                          conditionalPanel(
+                            "input.bvi_showRaceHispanic == true",
+                            sliderInput("bvi_filterRaceHispanic", "Percent Hispanic", 
+                                        min = 0, max = 100, value = c(0, 100), post = "%")
+                          ),
+                          checkboxInput("bvi_showGender", "Filter by % Female"),
+                          conditionalPanel(
+                            "input.bvi_showGender == true",
+                            sliderInput("bvi_filterGender", "Percent Female", 
+                                        min = 0, max = 100, value = c(0, 100), post = "%")
+                          ),
+                          checkboxInput("bvi_showFirstGen", "Filter by % First Gen"),
+                          conditionalPanel(
+                            "input.bvi_showFirstGen == true",
+                            sliderInput("bvi_filterFirstGen", "Percent First Gen", 
+                                        min = 0, max = 100, value = c(0, 100), post = "%")
+                          ),
+                          h4("Academics"),
+                          checkboxInput("bvi_showSAT", "Filter by SAT Score"),
+                          conditionalPanel(
+                            "input.bvi_showSAT == true",
+                            sliderInput("bvi_filterSAT", "SAT Average Range", 
+                                        min = 400, max = 1600, value = c(400, 1600))
+                          ),
+                          checkboxInput("bvi_showAdmRate", "Filter by Admission Rate"),
+                          conditionalPanel(
+                            "input.bvi_showAdmRate == true",
+                            sliderInput("bvi_filterAdmRate", "Admission Rate", 
+                                        min = 0, max = 100, value = c(0, 100), post = "%")
+                          ),
+                          h4("Location"),
+                          # State
+                          checkboxInput("bvi_showState", "Filter by State"),
+                          conditionalPanel(
+                            "input.bvi_showState == true",
+                            selectizeInput("bvi_filterState", "State(s)", 
+                                           choices =states, multiple = TRUE)
+                          ),
+                          # Region
+                          checkboxInput("bvi_showRegion", "Filter by Region"),
+                          conditionalPanel(
+                            "input.bvi_showRegion == true",
+                            selectizeInput("bvi_filterRegion", "Region(s)", 
+                                           choices = regions, multiple = TRUE)
+                          ),
+                          h4("Characteristics"),
+                          #Public/Private
+                          checkboxInput("bvi_showPublicPrivate", "Filter by School Type"),
+                          conditionalPanel(
+                            "input.bvi_showPublicPrivate == true",
+                            radioButtons("bvi_filterPublicPrivate", "School Type", 
+                                         choices = c("Public", "Private not-for-profit"))
+                          ),
+                          # HBCU
+                          checkboxInput("bvi_showHBCU", "Filter by HBCU Status"),
+                          conditionalPanel(
+                            "input.bvi_showHBCU == true",
+                            radioButtons("bvi_filterHBCU", "HBCU Status", 
+                                         choices = c("Yes", "No"))
+                          ),
+                          # Religion
+                          checkboxInput("bvi_showReligion", "Filter by Religious Affiliation"),
+                          conditionalPanel(
+                            "input.bvi_showReligion == true",
+                            selectizeInput("bvi_filterReligion", "Religious Affiliation(s)", 
+                                           choices = religion_choices, multiple = TRUE)
+                          ),
+                          # Degree of Urbanization
+                          checkboxInput("bvi_showUrban", "Filter by Urbanization"),
+                          conditionalPanel(
+                            "input.bvi_showUrban == true",
+                            selectizeInput("bvi_filterUrban", "Degree of Urbanization", 
+                                           choices = urbanization_choices, multiple = TRUE)
+                          ),
+                          #Highlight Select Schools
+                          h3("Highlight Specific Schools"),
+                          h4("Select up to 5 schools to highlight:"),
+                          selectizeInput(
+                            inputId = "bvi_highlightSchool",
+                            label = "Select School(s):",
+                            choices = school_choices,
+                            multiple = TRUE,
+                            options=list(maxItems=5)
+                          )
+                        ),
+                        mainPanel(
+                          h3("Best Value Index Analysis"),
+                          h4(textOutput("bvi_avg_text")),
+                          br(),
+                          h5("Filtered Data Table:"),
+                          DTOutput("bvi_df"),
+                          br(),
+                          h5("Distribution of Best Value Index:"),
+                          plotOutput("bvi_hist")
+                        )
+                      )
              ),
              
              tabPanel("Map",
@@ -491,6 +608,133 @@ server <- function(input, output, session) {
       gridExtra::grid.arrange(grobs = plot_list, ncol = 1)
     }
   }) # End of Student Plots
+  
+  
+  # --- BVI Logic (Independent from Variable Exploration) ---
+  
+  # Reactive dataframe for BVI tab
+  filt_bvi_data <- reactive({
+    res <- full_data
+    
+    #White
+    if(input$bvi_showRaceWhite == TRUE){
+      min_w<-input$bvi_filterRaceWhite[1]
+      max_w<-input$bvi_filterRaceWhite[2]
+      res <- res |> filter(PCT_WHITE>= min_w & PCT_WHITE<= max_w)
+    }
+    #Asian
+    if(input$bvi_showRaceAsian == TRUE){
+      min_a<-input$bvi_filterRaceAsian[1]
+      max_a<-input$bvi_filterRaceAsian[2]
+      res <- res |> filter(UGDS_ASIAN>= min_a & UGDS_ASIAN<= max_a)
+    }
+    #Black
+    if(input$bvi_showRaceBlack == TRUE){
+      min_b<-input$bvi_filterRaceBlack[1]
+      max_b<-input$bvi_filterRaceBlack[2]
+      res <- res |> filter(UGDS_BLACK>= min_b & UGDS_BLACK<= max_b)
+    }
+    #Hispanic
+    if(input$bvi_showRaceHispanic == TRUE){
+      min_h<-input$bvi_filterRaceHispanic[1]
+      max_h<-input$bvi_filterRaceHispanic[2]
+      res <- res |> filter(UGDS_HISP>= min_h & UGDS_HISP<= max_h)
+    }
+    #Gender
+    if(input$bvi_showGender == TRUE){
+      min_f<-input$bvi_filterGender[1]
+      max_f<-input$bvi_filterGender[2]
+      res <- res |> filter(FEMALE>= min_f & FEMALE<= max_f)
+    }
+    #First Gen
+    if(input$bvi_showFirstGen == TRUE){
+      min_g<-input$bvi_filterFirstGen[1]
+      max_g<-input$bvi_filterFirstGen[2]
+      res <- res |> filter(FIRST_GEN>= min_g & FIRST_GEN<= max_g)
+    }
+    #SAT
+    if(input$bvi_showSAT == TRUE){
+      min_sat<-input$bvi_filterSAT[1]
+      max_sat<-input$bvi_filterSAT[2]
+      res <- res |> filter(SAT_AVG>= min_sat & SAT_AVG<= max_sat)
+    }
+    #Admission Rate
+    if(input$bvi_showAdmRate == TRUE){
+      min_r<-input$bvi_filterAdmRate[1]
+      max_r<-input$bvi_filterAdmRate[2]
+      res <- res |> filter(ADM_RATE>= min_r & ADM_RATE<= max_r)
+    }
+    #State
+    if(input$bvi_showState == TRUE){
+      sel_st<-input$bvi_filterState
+      res <- res |> filter(`State abbreviation` %in% sel_st)
+    }
+    #Region
+    if(input$bvi_showRegion == TRUE){
+      sel_rg<-input$bvi_filterRegion
+      res <- res |> filter(`Bureau of Economic Analysis (BEA) regions` %in% sel_rg)
+    }
+    #Public/Private
+    if(input$bvi_showPublicPrivate == TRUE){
+      sel_pub<-input$bvi_filterPublicPrivate
+      res <- res |> filter(pub_pri %in% sel_pub)
+    }
+    #HBCU
+    if(input$bvi_showHBCU == TRUE){
+      sel_hbcu<-input$bvi_filterHBCU
+      res <- res |> filter(`Historically Black College or University` %in% sel_hbcu)
+    }
+    #Religious
+    if(input$bvi_showReligion == TRUE){
+      sel_rlg<-input$bvi_filterReligion
+      res <- res |> filter(religion %in% sel_rlg)
+    }
+    #Urbanization
+    if(input$bvi_showUrban == TRUE){
+      sel_urb<-input$bvi_filterUrban
+      res <- res |> filter(urbanization %in% sel_urb)
+    }
+    
+    return(res)
+  })
+  
+  # Average BVI Display
+  output$bvi_avg_text <- renderText({
+    req(nrow(filt_bvi_data()) > 0)
+    avg_val <- mean(filt_bvi_data()$Best_Value_Index, na.rm = TRUE)
+    paste("Average Best Value Index of Filtered Schools:", round(avg_val, 3))
+  })
+  
+  # BVI Histogram
+  output$bvi_hist <- renderPlot({
+    req(nrow(filt_bvi_data()) > 0)
+    
+    # Highlight data
+    high_df <- filt_bvi_data() |> filter(INSTNM %in% input$bvi_highlightSchool)
+    
+    p <- ggplot(filt_bvi_data(), aes(x = Best_Value_Index)) +
+      geom_histogram(fill = "purple", color = "white", bins = 30) +
+      theme_minimal() +
+      labs(x = "Best Value Index", y = "Count", title = "Distribution of Best Value Index")
+    
+    # Add vertical lines for highlighted schools
+    if(nrow(high_df) > 0) {
+      p <- p + geom_vline(data = high_df, aes(xintercept = Best_Value_Index, color = INSTNM), 
+                          size = 1.2, show.legend = TRUE)
+    }
+    p
+  })
+  
+  # BVI Data Table
+  output$bvi_df <- renderDT({
+    validate(need(nrow(filt_bvi_data()) > 0, "No colleges match your criteria."))
+    
+    # Select relevant BVI columns and original variables for context
+    filt_bvi_data() |> 
+      select(INSTNM, Best_Value_Index, any_of(names(rename_map)))
+  }, options = list(pageLength = 10))
+  
+  
   
   # --- Server Logic for Map (Sub-tab 2c) ---
   
