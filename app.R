@@ -532,9 +532,12 @@ server <- function(input, output, session) {
   output$st_plots <- renderPlot({
     req(nrow(filt_st_data()) > 0)
     
-    # 1. Grab highlight data BEFORE dropping INSTNM
-    high_df <- filt_st_data() |> 
-      filter(INSTNM %in% input$highlightSchool)
+    # 1. Grab highlight data from FULL dataset (so it shows even if filtered out)
+    # We must rename columns to match the plotting data
+    high_df <- full_data |> 
+      filter(INSTNM %in% input$highlightSchool) |> 
+      rename(any_of(rename_map)) |> 
+      select(INSTNM, any_of(input$selected_vars))
     
     # drop inst name
     plot_df <- filt_st_data() |> select(-INSTNM)
@@ -709,8 +712,8 @@ server <- function(input, output, session) {
   output$bvi_hist <- renderPlot({
     req(nrow(filt_bvi_data()) > 0)
     
-    # Highlight data
-    high_df <- filt_bvi_data() |> filter(INSTNM %in% input$bvi_highlightSchool)
+    # Highlight data from FULL dataset (so it shows even if filtered out)
+    high_df <- full_data |> filter(INSTNM %in% input$bvi_highlightSchool)
     
     p <- ggplot(filt_bvi_data(), aes(x = Best_Value_Index)) +
       geom_histogram(fill = "purple", color = "white", bins = 30) +
