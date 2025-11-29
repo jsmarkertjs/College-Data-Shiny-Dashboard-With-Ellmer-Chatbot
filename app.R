@@ -493,10 +493,15 @@ ui <- navbarPage(
   ),
   
   # --- Main Tab 4: Data Table ---
-  tabPanel("Data Table",
-           h2("Data Table Page"),
-           p("This is where the main data table will be displayed."),
-           
+  tabPanel(
+    "Data Table",
+    fluidPage(
+      h2("Full College Dataset"),
+      p("Use the filters in other tabs to understand the context, then explore and export the full cleaned dataset here."),
+      downloadButton("download_full_data", "Download CSV"),
+      br(), br(),
+      DTOutput("full_table")
+    )
   )
 ) # End of User Input Section
 
@@ -873,7 +878,25 @@ server <- function(input, output, session) {
   # Server logic for 'Researchers and Administrators' tab...
   
   # Server logic for 'Data Table' tab...
+  full_table_data <- reactive({
+    full_data |>
+      rename(any_of(rename_map))
+  })
   
+  output$full_table <- renderDT({
+    full_table_data()
+  },
+  options = list(pageLength = 25, scrollX = TRUE))
+  
+  #download the file and have the date they downloaded it in the name
+  output$download_full_data <- downloadHandler(
+    filename = function() {
+      paste0("college_dataset_", Sys.Date(), ".csv")
+    },
+    content = function(file) {
+      write_csv(full_table_data(), file)
+    }
+  )
 }
 
 # --- Run the Application ---
