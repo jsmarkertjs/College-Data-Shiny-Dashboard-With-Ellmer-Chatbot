@@ -74,12 +74,113 @@ ui <- navbarPage(
   #INSERT THEME HERE 
   
   # --- Main Tab 1: Intro ---
-  tabPanel("Intro",
-           h2("Introduction Page"),
-           p("Content for intro page.")
-           #Please note SAT filtering will eliminate 1/2 the data and explain 
-           #some of the variables that may be confusing 
-           
+  tabPanel(
+    "Intro",
+    fluidPage(
+      tags$head(
+        tags$script(HTML("
+        function switchToTab(tabName) {
+          var tabs = $('a[data-toggle=\"tab\"]');
+          tabs.each(function() {
+            var $this = $(this);
+            if ($this.text().trim() === tabName) {
+              $this.tab('show');
+            }
+          });
+        }
+      "))
+      ),
+      
+      br(),
+      fluidRow(
+        column(
+          width = 8,
+          h2("College Education Analysis Dashboard")
+        )
+      ),
+      
+      # Short subtitle in a well panel
+      wellPanel(
+        p("Explore how college cost, debt, and post-graduation earnings interact with key institutional characteristics to help students, families, and researchers make data-informed decisions.")
+      ),
+      
+      # Main description
+      p("This app helps students, families, and institutional researchers evaluate the value of four-year colleges by combining cost, debt, and post-graduation earnings with key institutional characteristics."),
+      p("The dashboard uses a cleaned subset of the U.S. Department of Education's College Scorecard and related IPEDS data, limited to currently operating four-year public and private nonprofit institutions."),
+      p("SAT scores are only reported for about half of the institutions in this dataset. If you turn on SAT filtering, many schools will be removed from the results, so consider using admission rate filters instead if you want to keep more colleges in view."),
+      
+      fluidRow(
+        column(
+          width = 4,
+          wellPanel(
+            h4(
+              tags$a(
+                href = "#",
+                onclick = "switchToTab('Students and Parents'); return false;",
+                "Students & Families"
+              )
+            ),
+            p(
+              "Quickly narrow down a list of potential schools using filters for cost, location, and student demographics, then spot-check a few favorites with highlighted tables and plots."
+            )
+          )
+        ),
+        column(
+          width = 4,
+          wellPanel(
+            h4(
+              tags$a(
+                href = "#",
+                onclick = "switchToTab('Researchers and Administrators'); return false;",
+                "Researchers & Admins"
+              )
+            ),
+            p(
+              "Interactively examine distributions, relationships, and simple regression models to understand how institutional characteristics relate to student outcomes such as graduation rates."
+            )
+          )
+        ),
+        column(
+          width = 4,
+          wellPanel(
+            h4(
+              tags$a(
+                href = "#",
+                onclick = "switchToTab('Data Table'); return false;",
+                "Data Table"
+              )
+            ),
+            p(
+              "View the full cleaned dataset in a sortable table, filter columns, and export data for use in your own analyses or reports."
+            )
+          )
+        )
+      ),
+      
+      h3("How to Use This App"),
+      tags$ul(
+        tags$li(
+          tags$strong("Students and Parents tab: "),
+          "Filter schools and explore variables of interest for prospective students and families."
+        ),
+        tags$li(
+          tags$strong("Best Value Index sub-tab: "),
+          "Focus on the combined cost-benefit measure for your filtered set of institutions."
+        ),
+        tags$li(
+          tags$strong("Map sub-tab: "),
+          "See where filtered colleges are located and inspect key metrics by hovering over points."
+        ),
+        tags$li(
+          tags$strong("Researchers and Administrators tab: "),
+          "Access single-variable, multi-variable, and model testing tools for more advanced analysis."
+        ),
+        tags$li(
+          tags$strong("Data Table tab: "),
+          "Browse, sort, and export the underlying dataset powering the visualizations."
+        )
+      )
+    )
   ),
   
   # --- Main Tab 2: Students and Parents ---
