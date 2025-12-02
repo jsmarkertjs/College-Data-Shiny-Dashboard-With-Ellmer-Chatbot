@@ -469,28 +469,183 @@ ui <- navbarPage(
   tabPanel("Researchers and Administrators",
            tabsetPanel(
              
-             # Sub-tab 3a
+             # Sub-tab 3a: Single variable exploration
              tabPanel("Single variable exploration",
-                      h3("Single Variable Exploration"),
-                      p("Content here.")
-                      # Add stuff for sub-tab here
+                      sidebarLayout(
+                        sidebarPanel(
+                          h3("Single Variable Exploration"),
+                          helpText("Choose one numeric variable and optional filters, then inspect its distribution."),
+                          
+                          # numeric variable to explore
+                          selectInput(
+                            inputId = "sv_var",
+                            label   = "Numeric variable:",
+                            choices = c(
+                              "Graduation rate (150% time)"     = "C150_4",
+                              "Admission Rate (%)"              = "ADM_RATE",
+                              "Median Earnings After 10 Years"  = "MD_EARN_WNE_P10",
+                              "Tuition (In-state)"              = "TUITIONFEE_IN",
+                              "Tuition (Out-of-state)"          = "TUITIONFEE_OUT",
+                              "Median Debt at Graduation"       = "GRAD_DEBT_MDN",
+                              "Average SAT"                     = "SAT_AVG",
+                              "Average Cost (In-state)"         = "NPT4_PUB",
+                              "Average Cost (Out-of-state)"     = "NPT4_PRIV",
+                              "Average Faculty Salary"          = "AVGFACSAL",
+                              "Best Value Index"                = "Best_Value_Index"
+                            )
+                          ),
+                          
+                          # optional region filter
+                          selectInput(
+                            inputId = "sv_region",
+                            label   = "Region:",
+                            choices = c("All regions", sort(unique(full_data$`Bureau of Economic Analysis (BEA) regions`)))
+                          ),
+                          
+                          # optional school type filter
+                          selectInput(
+                            inputId = "sv_school_type",
+                            label   = "School type:",
+                            choices = c("All types", "Public", "Private not-for-profit")
+                          ),
+                          
+                          # optional log transform for skewed variables
+                          checkboxInput("sv_log", "Apply log10 transform", FALSE)
+                        ),
+                        mainPanel(
+                          h3(textOutput("sv_title")),
+                          plotOutput("sv_hist"),
+                          br(),
+                          strong(textOutput("sv_mean_text"))
+                        )
+                      )
              ),
              
-             # Sub-tab 3b
+             # Sub-tab 3b: Multi-Variable Exploration
              tabPanel("Multi-Variable Exploration",
-                      h3("Multi-Variable Exploration"),
-                      p("Content here.")
-                      # Add stuff for sub-tab here
+                      sidebarLayout(
+                        sidebarPanel(
+                          h3("Multi-Variable Exploration"),
+                          helpText("Explore the relationship between two numeric variables and optionally compare groups."),
+                          
+                          # X variable
+                          selectInput(
+                            inputId = "mv_x",
+                            label   = "X variable:",
+                            choices = c(
+                              "Admission Rate (%)"              = "ADM_RATE",
+                              "Graduation rate (150% time)"     = "C150_4",
+                              "Median Earnings After 10 Years"  = "MD_EARN_WNE_P10",
+                              "Tuition (In-state)"              = "TUITIONFEE_IN",
+                              "Tuition (Out-of-state)"          = "TUITIONFEE_OUT",
+                              "Median Debt at Graduation"       = "GRAD_DEBT_MDN",
+                              "Average SAT"                     = "SAT_AVG",
+                              "Average Cost (In-state)"         = "NPT4_PUB",
+                              "Average Cost (Out-of-state)"     = "NPT4_PRIV",
+                              "Best Value Index"                = "Best_Value_Index"
+                            ),
+                            selected = "ADM_RATE"
+                          ),
+                          
+                          # Y variable
+                          selectInput(
+                            inputId = "mv_y",
+                            label   = "Y variable:",
+                            choices = c(
+                              "Graduation rate (150% time)"     = "C150_4",
+                              "Admission Rate (%)"              = "ADM_RATE",
+                              "Median Earnings After 10 Years"  = "MD_EARN_WNE_P10",
+                              "Median Debt at Graduation"       = "GRAD_DEBT_MDN",
+                              "Best Value Index"                = "Best_Value_Index"
+                            ),
+                            selected = "C150_4"
+                          ),
+                          
+                          # optional grouping variable to compare groups
+                          selectInput(
+                            inputId = "mv_group",
+                            label   = "Grouping variable (for tests/boxplots):",
+                            choices = c(
+                              "None"                            = "none",
+                              "Public vs Private"               = "pub_pri",
+                              "Region"                          = "Bureau of Economic Analysis (BEA) regions",
+                              "HBCU status"                     = "Historically Black College or University"
+                            ),
+                            selected = "none"
+                          ),
+                          
+                          # optional region filter
+                          selectInput(
+                            inputId = "mv_region",
+                            label   = "Filter by region:",
+                            choices = c("All regions", sort(unique(full_data$`Bureau of Economic Analysis (BEA) regions`)))
+                          )
+                        ),
+                        mainPanel(
+                          h3("Scatterplot: X vs Y"),
+                          plotOutput("mv_scatter"),
+                          br(),
+                          h3("Group Comparison (Boxplot)"),
+                          plotOutput("mv_boxplot"),
+                          br(),
+                          h3("Statistical Test Result"),
+                          verbatimTextOutput("mv_test_result")
+                        )
+                      )
              ),
              
-             # Sub-tab 3c
+             # Sub-tab 3c: Model Testing
              tabPanel("Model Testing",
-                      h3("Model Testing"),
-                      p("Content here.")
-                      # Add stuff for sub-tab here
+                      sidebarLayout(
+                        sidebarPanel(
+                          h3("Model Testing"),
+                          helpText("Fit a linear regression model with graduation rate as the response."),
+                          
+                          # predictors chosen by the user
+                          selectInput(
+                            inputId  = "mt_predictors",
+                            label    = "Predictor variables:",
+                            multiple = TRUE,
+                            choices  = c(
+                              "Admission Rate (%)"              = "ADM_RATE",
+                              "Median Earnings After 10 Years"  = "MD_EARN_WNE_P10",
+                              "Tuition (In-state)"              = "TUITIONFEE_IN",
+                              "Tuition (Out-of-state)"          = "TUITIONFEE_OUT",
+                              "Median Debt at Graduation"       = "GRAD_DEBT_MDN",
+                              "Average SAT"                     = "SAT_AVG",
+                              "Average Cost (In-state)"         = "NPT4_PUB",
+                              "Average Cost (Out-of-state)"     = "NPT4_PRIV",
+                              "Average Faculty Salary"          = "AVGFACSAL",
+                              "Best Value Index"                = "Best_Value_Index"
+                            )
+                          ),
+                          
+                          # optional filters for model subset
+                          selectInput(
+                            inputId = "mt_region",
+                            label   = "Region:",
+                            choices = c("All regions", sort(unique(full_data$`Bureau of Economic Analysis (BEA) regions`)))
+                          ),
+                          selectInput(
+                            inputId = "mt_school_type",
+                            label   = "School type:",
+                            choices = c("All types", "Public", "Private not-for-profit")
+                          ),
+                          
+                          # button so model only refits when clicked
+                          actionButton("mt_fit", "Fit Regression Model")
+                        ),
+                        mainPanel(
+                          h3("Model Summary"),
+                          verbatimTextOutput("mt_model_summary"),
+                          br(),
+                          h3("Coefficient Table"),
+                          DTOutput("mt_coef_table")
+                        )
+                      )
              )
            )
-  ),
+  ),  # END of main tab 3
   
   # --- Main Tab 4: Data Table ---
   tabPanel("Data Table",
@@ -871,6 +1026,235 @@ server <- function(input, output, session) {
   })
   
   # Server logic for 'Researchers and Administrators' tab...
+
+  
+  # Research tab: Single variable exploration
+
+  sv_data <- reactive({
+    df <- full_data
+    
+    # optional region filter
+    if (input$sv_region != "All regions") {
+      df <- df |> dplyr::filter(`Bureau of Economic Analysis (BEA) regions` == input$sv_region)
+    }
+    
+    # optional school type filter
+    if (input$sv_school_type != "All types") {
+      df <- df |> dplyr::filter(pub_pri == input$sv_school_type)
+    }
+    
+    # keep only rows with non-missing selected variable
+    df <- df |> dplyr::filter(!is.na(.data[[input$sv_var]]))
+    
+    validate(need(nrow(df) > 0, "No data available for these filter settings."))
+    df
+  })
+  
+  # title above histogram
+  output$sv_title <- renderText({
+    paste("Distribution of", input$sv_var)
+  })
+  
+  # histogram of selected variable
+  output$sv_hist <- renderPlot({
+    df <- sv_data()
+    x  <- df[[input$sv_var]]
+    
+    # optional log transform
+    if (input$sv_log) {
+      x_label <- paste0("log10(", input$sv_var, ")")
+      x       <- log10(x)
+    } else {
+      x_label <- input$sv_var
+    }
+    
+    ggplot(data.frame(x = x), aes(x)) +
+      geom_histogram(bins = 30, fill = "steelblue", color = "white") +  # match student tab
+      theme_minimal() +
+      labs(
+        title = paste("Histogram of", input$sv_var),
+        x     = x_label,
+        y     = "Count"
+      )
+  })
+  
+  # mean display
+  output$sv_mean_text <- renderText({
+    df <- sv_data()
+    x  <- df[[input$sv_var]]
+    
+    if (input$sv_log) {
+      mean_val <- mean(log10(x), na.rm = TRUE)
+      paste("Mean of log10(", input$sv_var, "):", round(mean_val, 3))
+    } else {
+      mean_val <- mean(x, na.rm = TRUE)
+      paste("Mean of", input$sv_var, ":", round(mean_val, 3))
+    }
+  })
+  
+  
+
+  # Research tab: Multi-Variable Exploration
+
+  
+  mv_data <- reactive({
+    df <- full_data
+    
+    # optional region filter
+    if (input$mv_region != "All regions") {
+      df <- df |> dplyr::filter(`Bureau of Economic Analysis (BEA) regions` == input$mv_region)
+    }
+    
+    # require x and y not missing
+    df <- df |>
+      dplyr::filter(
+        !is.na(.data[[input$mv_x]]),
+        !is.na(.data[[input$mv_y]])
+      )
+    
+    # if grouping variable selected, require it not missing
+    if (input$mv_group != "none") {
+      df <- df |> dplyr::filter(!is.na(.data[[input$mv_group]]))
+    }
+    
+    validate(need(nrow(df) > 0, "No usable data for this variable combination."))
+    df
+  })
+  
+  # scatterplot
+  output$mv_scatter <- renderPlot({
+    df <- mv_data()
+    
+    if (input$mv_group == "none") {
+      ggplot(df, aes(x = .data[[input$mv_x]], y = .data[[input$mv_y]])) +
+        geom_point(alpha = 0.6, color = "steelblue") +        # match numeric student plots
+        theme_minimal() +
+        labs(
+          title = paste(input$mv_y, "vs", input$mv_x),
+          x     = input$mv_x,
+          y     = input$mv_y
+        )
+    } else {
+      ggplot(df,
+             aes(x = .data[[input$mv_x]],
+                 y = .data[[input$mv_y]],
+                 color = as.factor(.data[[input$mv_group]]))) +
+        geom_point(alpha = 0.6) +
+        scale_color_manual(                                   # use app colors for groups
+          values = c("steelblue", "darkgreen", "purple", "navy")
+        ) +
+        theme_minimal() +
+        labs(
+          title = paste(input$mv_y, "vs", input$mv_x, "by", input$mv_group),
+          x     = input$mv_x,
+          y     = input$mv_y,
+          color = input$mv_group
+        )
+    }
+  })
+  
+  # boxplot by group (only when group selected)
+  output$mv_boxplot <- renderPlot({
+    req(input$mv_group != "none")
+    df <- mv_data()
+    
+    ggplot(df,
+           aes(x = as.factor(.data[[input$mv_group]]),
+               y = .data[[input$mv_y]],
+               fill = as.factor(.data[[input$mv_group]]))) +
+      geom_boxplot(alpha = 0.8) +
+      scale_fill_manual(                                      # same palette as scatter
+        values = c("steelblue", "darkgreen", "purple", "navy")
+      ) +
+      theme_minimal() +
+      labs(
+        title = paste(input$mv_y, "by", input$mv_group),
+        x     = input$mv_group,
+        y     = input$mv_y
+      )
+  })
+  
+  # statistical tests
+  # - no group: correlation between X and Y
+  # - 2 groups: t-test on Y across groups
+  # - >2 groups: ANOVA on Y across groups
+  output$mv_test_result <- renderPrint({
+    df <- mv_data()
+    x  <- df[[input$mv_x]]
+    y  <- df[[input$mv_y]]
+    
+    if (input$mv_group == "none") {
+      cat("Correlation test between", input$mv_x, "and", input$mv_y, "\n\n")
+      print(cor.test(x, y))
+    } else {
+      group_var <- as.factor(df[[input$mv_group]])
+      n_levels  <- nlevels(group_var)
+      
+      if (n_levels == 2) {
+        cat("Two-sample t-test of", input$mv_y, "by", input$mv_group, "\n\n")
+        print(t.test(y ~ group_var))
+      } else {
+        cat("ANOVA of", input$mv_y, "by", input$mv_group, "\n\n")
+        print(summary(aov(y ~ group_var)))
+      }
+    }
+  })
+  
+  
+
+  # Research tab: Model Testing
+
+  mt_data <- reactive({
+    df <- full_data
+    
+    # optional region filter
+    if (input$mt_region != "All regions") {
+      df <- df |> dplyr::filter(`Bureau of Economic Analysis (BEA) regions` == input$mt_region)
+    }
+    
+    # optional school type filter
+    if (input$mt_school_type != "All types") {
+      df <- df |> dplyr::filter(pub_pri == input$mt_school_type)
+    }
+    
+    # response + predictors
+    vars <- c("C150_4", input$mt_predictors)
+    
+    df <- df |>
+      dplyr::select(dplyr::all_of(vars)) |>
+      dplyr::filter(if_all(everything(), ~ !is.na(.)))
+    
+    validate(need(nrow(df) > 5, "Not enough complete records to fit a regression model."))
+    df
+  })
+  
+  # fit model only when button is clicked
+  mt_fit <- eventReactive(input$mt_fit, {
+    df <- mt_data()
+    
+    # build formula like "C150_4 ~ ADM_RATE + TUITIONFEE_IN + ..."
+    form <- as.formula(
+      paste("C150_4 ~", paste(input$mt_predictors, collapse = " + "))
+    )
+    
+    lm(form, data = df)
+  })
+  
+  # model summary
+  output$mt_model_summary <- renderPrint({
+    req(input$mt_predictors)
+    print(summary(mt_fit()))
+  })
+  
+  # coefficient table
+  output$mt_coef_table <- renderDT({
+    req(input$mt_predictors)
+    model <- mt_fit()
+    tbl   <- as.data.frame(coef(summary(model)))
+    tbl   <- tibble::rownames_to_column(tbl, "Term")
+    datatable(tbl, options = list(pageLength = 10))
+  })
+  
   
   # Server logic for 'Data Table' tab...
   
