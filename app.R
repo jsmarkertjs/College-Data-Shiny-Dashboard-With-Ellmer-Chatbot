@@ -1033,8 +1033,28 @@ server <- function(input, output, session) {
   # Server logic for 'Researchers and Administrators' tab...
 
   
+  
+  
   # Research tab: Single variable exploration
 
+  sv_choices <- c(
+    "Graduation rate (150% time)"    = "C150_4",
+    "Admission Rate (%)"            = "ADM_RATE",
+    "Median Earnings After 10 Years"= "MD_EARN_WNE_P10",
+    "Tuition (In-state)"            = "TUITIONFEE_IN",
+    "Tuition (Out-of-state)"        = "TUITIONFEE_OUT",
+    "Median Debt at Graduation"     = "GRAD_DEBT_MDN",
+    "Average SAT"                   = "SAT_AVG",
+    "Average Cost (In-state)"       = "NPT4_PUB",
+    "Average Cost (Out-of-state)"   = "NPT4_PRIV",
+    "Best Value Index"              = "Best_Value_Index"
+  )
+  
+  get_sv_label <- function(code) {
+    nm <- names(sv_choices)[sv_choices == code]
+    if (length(nm) == 0) code else nm[1]
+  }
+  
   sv_data <- reactive({
     df <- full_data
     
@@ -1055,53 +1075,53 @@ server <- function(input, output, session) {
     df
   })
   
-  # title above histogram
+  # title above histogram (use readable label)
   output$sv_title <- renderText({
-    paste("Distribution of", input$sv_var)
+    pretty_name <- get_sv_label(input$sv_var)
+    paste("Distribution of", pretty_name)
   })
   
   # histogram of selected variable
   output$sv_hist <- renderPlot({
     df <- sv_data()
     x  <- df[[input$sv_var]]
+    pretty_name <- get_sv_label(input$sv_var)
     
     # optional log transform
     if (input$sv_log) {
-      x_label <- paste0("log10(", input$sv_var, ")")
+      x_label <- paste0("log10(", pretty_name, ")")
       x       <- log10(x)
     } else {
-      x_label <- input$sv_var
+      x_label <- pretty_name
     }
     
     ggplot(data.frame(x = x), aes(x)) +
       geom_histogram(bins = 30, fill = "steelblue", color = "white") +  # match student tab
       theme_minimal() +
       labs(
-        title = paste("Histogram of", input$sv_var),
+        title = paste("Histogram of", pretty_name),
         x     = x_label,
         y     = "Count"
       )
   })
   
-  # mean display
+  # mean display (use readable label)
   output$sv_mean_text <- renderText({
     df <- sv_data()
     x  <- df[[input$sv_var]]
+    pretty_name <- get_sv_label(input$sv_var)
     
     if (input$sv_log) {
       mean_val <- mean(log10(x), na.rm = TRUE)
-      paste("Mean of log10(", input$sv_var, "):", round(mean_val, 3))
+      paste("Mean of log10(", pretty_name, "):", round(mean_val, 3))
     } else {
       mean_val <- mean(x, na.rm = TRUE)
-      paste("Mean of", input$sv_var, ":", round(mean_val, 3))
+      paste("Mean of", pretty_name, ":", round(mean_val, 3))
     }
   })
   
   
 
-  # Research tab: Multi-Variable Exploration
-
-  
   mv_data <- reactive({
     df <- full_data
     
@@ -1117,8 +1137,10 @@ server <- function(input, output, session) {
         !is.na(.data[[input$mv_y]])
       )
     
-    # if grouping variable selected, require it not missing
+    # if grouping variable selected, require it not missing AND present
     if (input$mv_group != "none") {
+      validate(need(input$mv_group %in% names(df),
+                    "Selected grouping variable is not found in the data."))
       df <- df |> dplyr::filter(!is.na(.data[[input$mv_group]]))
     }
     
@@ -1145,7 +1167,7 @@ server <- function(input, output, session) {
                  y = .data[[input$mv_y]],
                  color = as.factor(.data[[input$mv_group]]))) +
         geom_point(alpha = 0.6) +
-        scale_color_manual(                                   # use app colors for groups
+        scale_color_manual(
           values = c("steelblue", "darkgreen", "purple", "navy")
         ) +
         theme_minimal() +
@@ -1168,7 +1190,7 @@ server <- function(input, output, session) {
                y = .data[[input$mv_y]],
                fill = as.factor(.data[[input$mv_group]]))) +
       geom_boxplot(alpha = 0.8) +
-      scale_fill_manual(                                      # same palette as scatter
+      scale_fill_manual(
         values = c("steelblue", "darkgreen", "purple", "navy")
       ) +
       theme_minimal() +
@@ -1206,7 +1228,6 @@ server <- function(input, output, session) {
   })
   
   
-
   # Research tab: Model Testing
 
   mt_data <- reactive({
@@ -1245,10 +1266,31 @@ server <- function(input, output, session) {
     lm(form, data = df)
   })
   
-  # model summary
+  # model summary with extra interpretation
   output$mt_model_summary <- renderPrint({
     req(input$mt_predictors)
-    print(summary(mt_fit()))
+    model  <- mt_fit()
+    s      <- summary(model)
+    r2     <- s$r.squared
+    
+    cat("Interpretation in context:\n")
+    cat("• The model predicts 6-year graduation rate (C150_4) from your selected predictors.\n")
+    cat("• R-squared ≈", round(r2 * 100, 1),
+        "%, meaning the model explains about that percent of the variation in graduation rates\n",
+        "  across the filtered set of institutions.\n")
+    
+    # quick directional summary of coefficients
+    coefs <- coef(s)
+    if (nrow(coefs) > 1) {
+      cat("• Positive coefficients indicate that higher values of a predictor are associated\n",
+          "  with higher graduation rates (holding other variables constant).\n",
+          "  Negative coefficients indicate the opposite.\n\n")
+    } else {
+      cat("\n")
+    }
+    
+    cat("Full regression output:\n\n")
+    print(s)
   })
   
   # coefficient table
