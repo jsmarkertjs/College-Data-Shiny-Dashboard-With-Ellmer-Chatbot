@@ -4,80 +4,134 @@ library(dplyr)
 library(leaflet)
 library(DT)
 library(tidyverse)
-#Load Data
-full_data<-read_csv("./data/college_scorecard_11-21.csv")
-#Percents to numbers
-full_data |> 
-  rename(pub_pri="Control of institution",
-         urbanization="Degree of urbanization (Urban-centric locale)",
-         religion="Religious affiliation") |> 
-  mutate(ADM_RATE=ADM_RATE*100) |> 
-  mutate(UGDS_ASIAN=UGDS_ASIAN*100) |> 
-  mutate(UGDS_BLACK=UGDS_BLACK*100) |> 
-  mutate(UGDS_HISP=UGDS_HISP*100) |> 
-  mutate(UGDS_WHITE=UGDS_WHITE*100) |> 
-  mutate(FEMALE=FEMALE*100) |> 
-  mutate(FIRST_GEN=FIRST_GEN*100)->full_data
+library(gridExtra)
+library(bslib)     
+library(thematic)  
 
-#Renaming Map (New Name = Old Name)
-rename_map <- c(
-  "Admission Rate" = "ADM_RATE",
-  "Median Earnings After 10 Years" = "MD_EARN_WNE_P10",
-  "Tuition (In-state)" = "TUITIONFEE_IN",
-  "Tuition (Out-of-state)" = "TUITIONFEE_OUT",
-  "Median Debt at Graduation" = "GRAD_DEBT_MDN",
-  "Average SAT" = "SAT_AVG",
-  "Average Cost (In-state)" = "NPT4_PUB",
-  "Average Cost (Out-of-state)" = "NPT4_PRIV",
-  "Urbanization" = "urbanization",
-  "Religion" = "religion"
-)
+# 1. Load Data
+raw_data <- read_csv("./data/college_scorecard_11-21.csv")
 
-states<-sort(full_data$"State abbreviation")
-regions<-full_data$"Bureau of Economic Analysis (BEA) regions"
-religion_choices<-sort(unique(full_data$religion))
-urbanization_choices<-sort(unique(full_data$urbanization))
-school_choices<-sort(unique(full_data$INSTNM))
-variable_choices<-names(rename_map)
-
-student_variable_dataset<-full_data |> 
-  rename(any_of(rename_map)) |> 
-  select(names(rename_map))
-
-
-#BVI
-#A higher BVI indicates a more favorable cost-benefit ratio, suggesting that the college 
-#offers high earning potential relative to its price tag and debt load.
-full_data <- full_data |>
+# 2. Pre-calculation for Best Value Index (using raw names before rename)
+raw_data <- raw_data |>
   mutate(
-    # Create a single 'NET_COST' column based on the institution's control
-    # CONTROL: 1 = Public, 2 = Private nonprofit, 3 = Private for-profit
-    NET_COST = case_when(
+    # Create NET_COST based on control (Public vs Private)
+    # CONTROL: 1=Public, 2=Private nonprofit, 3=Private for-profit
+    NET_COST_CALC = case_when(
       CONTROL == 1 ~ NPT4_PUB,
-      CONTROL %in% c(2, 3) ~ NPT4_PRIV,
-      TRUE ~ NA_real_ # Use NA if CONTROL is missing or unexpected
+      CONTROL %in% c(2) ~ NPT4_PRIV,
+      TRUE ~ NA_real_
     ),
-    
-    # Create BVI column
-    Best_Value_Index = round(MD_EARN_WNE_P10 / (NET_COST + GRAD_DEBT_MDN), 3)
+    # Create Best Value Index
+    Best_Value_Index = round(MD_EARN_WNE_P10 / (NET_COST_CALC + GRAD_DEBT_MDN), 3)
   )
 
+# 3. Define the Master Mapping (Nice Name = Old Name)
+rename_mapping <- c(
+  "Institution"                    = "INSTNM",
+  "Admission Rate"                 = "ADM_RATE",
+  "Graduation Rate"                = "C150_4",
+  "Median Earnings After 10 Years" = "MD_EARN_WNE_P10",
+  "Tuition (In-state)"             = "TUITIONFEE_IN",
+  "Tuition (Out-of-state)"         = "TUITIONFEE_OUT",
+  "Median Debt at Graduation"      = "GRAD_DEBT_MDN",
+  "SAT Average"                    = "SAT_AVG",
+  "Average Cost (In-state)"        = "NPT4_PUB",
+  "Average Cost (Out-of-state)"    = "NPT4_PRIV",
+  "Faculty Salary"                 = "AVGFACSAL",
+  "Entry Age"                      = "AGE_ENTRY",
+  
+  # Demographics
+  "% Asian"                        = "UGDS_ASIAN",
+  "% Black"                        = "UGDS_BLACK",
+  "% Hispanic"                     = "UGDS_HISP",
+  "% White"                        = "UGDS_WHITE",
+  "% Female"                       = "FEMALE",
+  "% First Gen"                    = "FIRST_GEN",
+  
+  # Categorical
+  "Control"                        = "Control of institution",
+  "Urbanization"                   = "Degree of urbanization (Urban-centric locale)",
+  "Religion"                       = "Religious affiliation",
+  "HBCU"                           = "Historically Black College or University",
+  "Region"                         = "Bureau of Economic Analysis (BEA) regions",
+  "State"                          = "State abbreviation", 
+  "City"                           = "CITY",
+  "Latitude"                       = "LATITUDE",
+  "Longitude"                      = "LONGITUDE",
+  "URL"                            = "INSTURL",
+  "Best Value Index"               = "Best_Value_Index"
+)
+
+# 4. Apply changes 
+full_data <- raw_data |> 
+  select(-any_of("HBCU")) |> 
+  rename(any_of(rename_mapping)) |> 
+  mutate(
+    # Fix percentages (using the new names)
+    `Admission Rate`   = `Admission Rate` * 100,
+    `% Asian`          = `% Asian` * 100,
+    `% Black`          = `% Black` * 100,
+    `% Hispanic`       = `% Hispanic` * 100,
+    `% White`          = `% White` * 100,
+    `% Female`         = `% Female` * 100,
+    `% First Gen`      = `% First Gen` * 100,
+    `Graduation Rate`  = `Graduation Rate` * 100,
+    
+    # Ensure categorical consistency
+    HBCU               = ifelse(HBCU == 1, "Yes", "No"),
+    # Check if Hispanic Serving exists, handle gracefully
+    `Hispanic Serving` = if("Hispanic Serving" %in% names(raw_data)) ifelse(`Hispanic Serving` == 1, "Yes", "No") else "No"
+  )
+
+# 5. Helper vectors for UI Choices
+numeric_vars <- c("Admission Rate", "Graduation Rate", "Median Earnings After 10 Years", 
+                  "Tuition (In-state)", "Tuition (Out-of-state)", "Median Debt at Graduation", 
+                  "SAT Average", "Faculty Salary", "Entry Age", "Best Value Index",
+                  "% First Gen", "% Female", 
+                  "% Asian", "% Black", "% Hispanic", "% White")
+
+state_choices    <- sort(unique(full_data$State))
+region_choices   <- sort(unique(full_data$Region))
+religion_choices <- sort(unique(full_data$Religion))
+urban_choices    <- sort(unique(full_data$Urbanization))
+school_choices   <- sort(unique(full_data$Institution))
 
 
+# -------------------------------------------------------------------------
+# UI
+# -------------------------------------------------------------------------
 
-
-
+# Define the Theme
+my_theme <- bs_theme(
+  version = 5,               # Use Bootstrap 5 (Modern)
+  bootswatch = "flatly",     # Professional base theme
+  primary = "#2C3E50",       # Deep Navy Blue (Professional)
+  secondary = "#18BC9C",     # Teal Accent (Modern)
+  base_font = font_google("Roboto"),
+  heading_font = font_google("Montserrat"),
+  "card-cap-bg" = "#2C3E50"  # Dark headers for cards
+)
 
 ui <- navbarPage(
   title = "College Education Analysis",
-  
-  #INSERT THEME HERE 
+  theme = my_theme, 
   
   # --- Main Tab 1: Intro ---
   tabPanel(
     "Intro",
     fluidPage(
       tags$head(
+        tags$style(HTML("
+          .well {
+            background-color: #ffffff;
+            border: 1px solid #e3e3e3;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 20px;
+          }
+          h2 { font-weight: 700; color: #2C3E50; }
+          .navbar { box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        ")),
         tags$script(HTML("
         function switchToTab(tabName) {
           var tabs = $('a[data-toggle=\"tab\"]');
@@ -109,6 +163,7 @@ ui <- navbarPage(
       p("The dashboard uses a cleaned subset of the U.S. Department of Education's College Scorecard and related IPEDS data, limited to currently operating four-year public and private nonprofit institutions."),
       p("SAT scores are only reported for about half of the institutions in this dataset. If you turn on SAT filtering, many schools will be removed from the results, so consider using admission rate filters instead if you want to keep more colleges in view."),
       
+      br(),
       fluidRow(
         column(
           width = 4,
@@ -117,7 +172,8 @@ ui <- navbarPage(
               tags$a(
                 href = "#",
                 onclick = "switchToTab('Students and Parents'); return false;",
-                "Students & Families"
+                "Students & Families",
+                style = "color: #18BC9C; font-weight: bold;"
               )
             ),
             p(
@@ -132,7 +188,8 @@ ui <- navbarPage(
               tags$a(
                 href = "#",
                 onclick = "switchToTab('Researchers and Administrators'); return false;",
-                "Researchers & Admins"
+                "Researchers & Admins",
+                style = "color: #18BC9C; font-weight: bold;"
               )
             ),
             p(
@@ -147,7 +204,8 @@ ui <- navbarPage(
               tags$a(
                 href = "#",
                 onclick = "switchToTab('Data Table'); return false;",
-                "Data Table"
+                "Data Table",
+                style = "color: #18BC9C; font-weight: bold;"
               )
             ),
             p(
@@ -157,6 +215,7 @@ ui <- navbarPage(
         )
       ),
       
+      hr(),
       h3("How to Use This App"),
       tags$ul(
         tags$li(
@@ -187,16 +246,13 @@ ui <- navbarPage(
   tabPanel("Students and Parents",
            tabsetPanel(
              
-             
-             
-             
-             # Sub-tab 2a - shae's section
+             # Sub-tab 2a - Variable Exploration
              tabPanel("Variable Exploration",
                       sidebarLayout(
                         sidebarPanel(
                           h3("Variable(s) of Interest"),
                           selectInput("selected_vars", "Select Variable(s):",
-                                      choices=variable_choices, 
+                                      choices=numeric_vars, 
                                       multiple = TRUE, selected="Admission Rate"),
                           
                           
@@ -258,14 +314,14 @@ ui <- navbarPage(
                           conditionalPanel(
                             "input.showState == true",
                             selectizeInput("filterState", "State(s)", 
-                                           choices =states, multiple = TRUE)
+                                           choices = state_choices, multiple = TRUE)
                           ),
                           # Region
                           checkboxInput("showRegion", "Filter by Region"),
                           conditionalPanel(
                             "input.showRegion == true",
                             selectizeInput("filterRegion", "Region(s)", 
-                                           choices = regions, multiple = TRUE)
+                                           choices = region_choices, multiple = TRUE)
                           ),
                           h4("Characteristics"),
                           #Public/Private
@@ -294,7 +350,7 @@ ui <- navbarPage(
                           conditionalPanel(
                             "input.showUrban == true",
                             selectizeInput("filterUrban", "Degree of Urbanization", 
-                                           choices = urbanization_choices, multiple = TRUE)
+                                           choices = urban_choices, multiple = TRUE)
                           ),
                           #Highlight Select Schools
                           h3("Highlight Specific Schools"),
@@ -308,20 +364,13 @@ ui <- navbarPage(
                           )
                         ), #End of sidebar Panel Student Exporatory Section
                         mainPanel(
-                          
-                          
                           h4("Variable Exploration"),
                           h5("Filtered Colleges with Variable(s) of Interest:"),
                           DTOutput("st_df"),
                           h5("Graphs of Variables of Interest:"),
                           plotOutput("st_plots")
-                          
-                          # Add stuff for sub-tab here
-                        ), #End up Main Panel Student Exploratory Section
+                        )
                       )),
-             
-             
-             
              
              # Sub-tab 2b
              tabPanel("Best Value Index",
@@ -385,14 +434,14 @@ ui <- navbarPage(
                           conditionalPanel(
                             "input.bvi_showState == true",
                             selectizeInput("bvi_filterState", "State(s)", 
-                                           choices =states, multiple = TRUE)
+                                           choices = state_choices, multiple = TRUE)
                           ),
                           # Region
                           checkboxInput("bvi_showRegion", "Filter by Region"),
                           conditionalPanel(
                             "input.bvi_showRegion == true",
                             selectizeInput("bvi_filterRegion", "Region(s)", 
-                                           choices = regions, multiple = TRUE)
+                                           choices = region_choices, multiple = TRUE)
                           ),
                           h4("Characteristics"),
                           #Public/Private
@@ -421,7 +470,7 @@ ui <- navbarPage(
                           conditionalPanel(
                             "input.bvi_showUrban == true",
                             selectizeInput("bvi_filterUrban", "Degree of Urbanization", 
-                                           choices = urbanization_choices, multiple = TRUE)
+                                           choices = urban_choices, multiple = TRUE)
                           ),
                           #Highlight Select Schools
                           h3("Highlight Specific Schools"),
@@ -453,8 +502,8 @@ ui <- navbarPage(
                           h3("Map Filters"),
                           # Input for selecting the Region
                           selectInput("mapRegion", "Select Region:", 
-                                      choices = sort(unique(full_data$`Bureau of Economic Analysis (BEA) regions`)),
-                                      selected = sort(unique(full_data$`Bureau of Economic Analysis (BEA) regions`))[1])
+                                      choices = region_choices,
+                                      selected = region_choices[1])
                         ),
                         mainPanel(
                           # The output for the leaflet map
@@ -480,26 +529,14 @@ ui <- navbarPage(
                           selectInput(
                             inputId = "sv_var",
                             label   = "Numeric variable:",
-                            choices = c(
-                              "Graduation rate (150% time)"     = "C150_4",
-                              "Admission Rate (%)"              = "ADM_RATE",
-                              "Median Earnings After 10 Years"  = "MD_EARN_WNE_P10",
-                              "Tuition (In-state)"              = "TUITIONFEE_IN",
-                              "Tuition (Out-of-state)"          = "TUITIONFEE_OUT",
-                              "Median Debt at Graduation"       = "GRAD_DEBT_MDN",
-                              "Average SAT"                     = "SAT_AVG",
-                              "Average Cost (In-state)"         = "NPT4_PUB",
-                              "Average Cost (Out-of-state)"     = "NPT4_PRIV",
-                              "Average Faculty Salary"          = "AVGFACSAL",
-                              "Best Value Index"                = "Best_Value_Index"
-                            )
+                            choices = numeric_vars
                           ),
                           
                           # optional region filter
                           selectInput(
                             inputId = "sv_region",
                             label   = "Region:",
-                            choices = c("All regions", sort(unique(full_data$`Bureau of Economic Analysis (BEA) regions`)))
+                            choices = c("All regions", region_choices)
                           ),
                           
                           # optional school type filter
@@ -532,33 +569,16 @@ ui <- navbarPage(
                           selectInput(
                             inputId = "mv_x",
                             label   = "X variable:",
-                            choices = c(
-                              "Admission Rate (%)"              = "ADM_RATE",
-                              "Graduation rate (150% time)"     = "C150_4",
-                              "Median Earnings After 10 Years"  = "MD_EARN_WNE_P10",
-                              "Tuition (In-state)"              = "TUITIONFEE_IN",
-                              "Tuition (Out-of-state)"          = "TUITIONFEE_OUT",
-                              "Median Debt at Graduation"       = "GRAD_DEBT_MDN",
-                              "Average SAT"                     = "SAT_AVG",
-                              "Average Cost (In-state)"         = "NPT4_PUB",
-                              "Average Cost (Out-of-state)"     = "NPT4_PRIV",
-                              "Best Value Index"                = "Best_Value_Index"
-                            ),
-                            selected = "ADM_RATE"
+                            choices = numeric_vars,
+                            selected = "Admission Rate"
                           ),
                           
                           # Y variable
                           selectInput(
                             inputId = "mv_y",
                             label   = "Y variable:",
-                            choices = c(
-                              "Graduation rate (150% time)"     = "C150_4",
-                              "Admission Rate (%)"              = "ADM_RATE",
-                              "Median Earnings After 10 Years"  = "MD_EARN_WNE_P10",
-                              "Median Debt at Graduation"       = "GRAD_DEBT_MDN",
-                              "Best Value Index"                = "Best_Value_Index"
-                            ),
-                            selected = "C150_4"
+                            choices = numeric_vars,
+                            selected = "Graduation Rate"
                           ),
                           
                           # optional grouping variable to compare groups
@@ -566,10 +586,10 @@ ui <- navbarPage(
                             inputId = "mv_group",
                             label   = "Grouping variable (for tests/boxplots):",
                             choices = c(
-                              "None"                            = "none",
-                              "Public vs Private"               = "pub_pri",
-                              "Region"                          = "Bureau of Economic Analysis (BEA) regions",
-                              "HBCU status"                     = "Historically Black College or University"
+                              "None"                          = "none",
+                              "Public vs Private"             = "Control",
+                              "Region"                        = "Region",
+                              "HBCU status"                   = "HBCU"
                             ),
                             selected = "none"
                           ),
@@ -578,7 +598,7 @@ ui <- navbarPage(
                           selectInput(
                             inputId = "mv_region",
                             label   = "Filter by region:",
-                            choices = c("All regions", sort(unique(full_data$`Bureau of Economic Analysis (BEA) regions`)))
+                            choices = c("All regions", region_choices)
                           )
                         ),
                         mainPanel(
@@ -606,25 +626,14 @@ ui <- navbarPage(
                             inputId  = "mt_predictors",
                             label    = "Predictor variables:",
                             multiple = TRUE,
-                            choices  = c(
-                              "Admission Rate (%)"              = "ADM_RATE",
-                              "Median Earnings After 10 Years"  = "MD_EARN_WNE_P10",
-                              "Tuition (In-state)"              = "TUITIONFEE_IN",
-                              "Tuition (Out-of-state)"          = "TUITIONFEE_OUT",
-                              "Median Debt at Graduation"       = "GRAD_DEBT_MDN",
-                              "Average SAT"                     = "SAT_AVG",
-                              "Average Cost (In-state)"         = "NPT4_PUB",
-                              "Average Cost (Out-of-state)"     = "NPT4_PRIV",
-                              "Average Faculty Salary"          = "AVGFACSAL",
-                              "Best Value Index"                = "Best_Value_Index"
-                            )
+                            choices  = numeric_vars
                           ),
                           
                           # optional filters for model subset
                           selectInput(
                             inputId = "mt_region",
                             label   = "Region:",
-                            choices = c("All regions", sort(unique(full_data$`Bureau of Economic Analysis (BEA) regions`)))
+                            choices = c("All regions", region_choices)
                           ),
                           selectInput(
                             inputId = "mt_school_type",
@@ -633,7 +642,7 @@ ui <- navbarPage(
                           ),
                           
                           # button so model only refits when clicked
-                          actionButton("mt_fit", "Fit Regression Model")
+                          actionButton("mt_fit", "Fit Regression Model", class = "btn-primary")
                         ),
                         mainPanel(
                           h3("Model Summary"),
@@ -653,7 +662,7 @@ ui <- navbarPage(
     fluidPage(
       h2("Full College Dataset"),
       p("Use the filters in other tabs to understand the context, then explore and export the full cleaned dataset here."),
-      downloadButton("download_full_data", "Download CSV"),
+      downloadButton("download_full_data", "Download CSV", class = "btn-success"),
       br(), br(),
       DTOutput("full_table")
     )
@@ -665,121 +674,103 @@ ui <- navbarPage(
 # --- Define the Server Logic ---
 server <- function(input, output, session) {
   
+  # NEW: Apply thematic styling to plots automatically
+  thematic_shiny()
+  
   # Server logic for 'Students and Parents' tab...
   ##Exploratory Analysis sub-tab:
   #This section creates a reactive df of the student's filters
   
   filt_st_data<-reactive({
+    # We filter on full_data which now uses Nice Names.
+    # We must use backticks for variable names with spaces.
+    
+    res <- full_data
+    
     #White
     if(input$showRaceWhite == TRUE){
       min_w<-input$filterRaceWhite[1]
       max_w<-input$filterRaceWhite[2]
-      full_data |> 
-        filter(PCT_WHITE>= min_w & 
-                 PCT_WHITE<= max_w)->full_data
+      res <- res |> filter(`% White`>= min_w & `% White`<= max_w)
     }
     #Asian
     if(input$showRaceAsian == TRUE){
       min_a<-input$filterRaceAsian[1]
       max_a<-input$filterRaceAsian[2]
-      full_data |> 
-        filter(UGDS_ASIAN>= min_a & 
-                 UGDS_ASIAN<= max_a)->full_data
+      res <- res |> filter(`% Asian`>= min_a & `% Asian`<= max_a)
     }
     #Black
     if(input$showRaceBlack == TRUE){
       min_b<-input$filterRaceBlack[1]
       max_b<-input$filterRaceBlack[2]
-      full_data |> 
-        filter(UGDS_BLACK>= min_b & 
-                 UGDS_BLACK<= max_b)->full_data
+      res <- res |> filter(`% Black`>= min_b & `% Black`<= max_b)
     }
     #Hispanic
     if(input$showRaceHispanic == TRUE){
       min_h<-input$filterRaceHispanic[1]
       max_h<-input$filterRaceHispanic[2]
-      full_data |> 
-        filter(UGDS_HISP>= min_h & 
-                 UGDS_HISP<= max_h)->full_data
+      res <- res |> filter(`% Hispanic`>= min_h & `% Hispanic`<= max_h)
     }
     #Gender
     if(input$showGender == TRUE){
       min_f<-input$filterGender[1]
       max_f<-input$filterGender[2]
-      full_data |> 
-        filter(FEMALE>= min_f & 
-                 FEMALE<= max_f)->full_data
+      res <- res |> filter(`% Female`>= min_f & `% Female`<= max_f)
     }
     #First Gen
     if(input$showFirstGen == TRUE){
       min_g<-input$filterFirstGen[1]
       max_g<-input$filterFirstGen[2]
-      full_data |> 
-        filter(FIRST_GEN>= min_g & 
-                 FIRST_GEN<= max_g)->full_data
+      res <- res |> filter(`% First Gen`>= min_g & `% First Gen`<= max_g)
     }
     #SAT
     if(input$showSAT == TRUE){
       min_sat<-input$filterSAT[1]
       max_sat<-input$filterSAT[2]
-      full_data |> 
-        filter(SAT_AVG>= min_sat & 
-                 SAT_AVG<= max_sat)->full_data
+      res <- res |> filter(`SAT Average`>= min_sat & `SAT Average`<= max_sat)
     }
     #Admission Rate
     if(input$showAdmRate == TRUE){
       min_r<-input$filterAdmRate[1]
       max_r<-input$filterAdmRate[2]
-      full_data |> 
-        filter(ADM_RATE>= min_r & 
-                 ADM_RATE<= max_r)->full_data
+      res <- res |> filter(`Admission Rate`>= min_r & `Admission Rate`<= max_r)
     }
     #State
     if(input$showState == TRUE){
       sel_st<-input$filterState
-      full_data |> 
-        filter(`State abbreviation` %in% sel_st)->full_data
+      res <- res |> filter(State %in% sel_st)
     }
     #Region
     if(input$showRegion == TRUE){
       sel_rg<-input$filterRegion
-      full_data |> 
-        filter(`Bureau of Economic Analysis (BEA) regions` %in% sel_rg)->full_data
+      res <- res |> filter(Region %in% sel_rg)
     }
     #Public/Private
     if(input$showPublicPrivate == TRUE){
       sel_pub<-input$filterPublicPrivate
-      full_data |> 
-        filter(pub_pri %in% sel_pub)->full_data
+      res <- res |> filter(Control %in% sel_pub)
     }
     #HBCU
     if(input$showHBCU == TRUE){
       sel_hbcu<-input$filterHBCU
-      full_data |> 
-        filter(`Historically Black College or University` %in% sel_hbcu)->full_data
+      res <- res |> filter(HBCU %in% sel_hbcu)
     }
     #Religious
     if(input$showReligion == TRUE){
       sel_rlg<-input$filterReligion
-      full_data |> 
-        filter(religion %in% sel_rlg)->full_data
+      res <- res |> filter(Religion %in% sel_rlg)
     }
     #Urbanization
     if(input$showUrban == TRUE){
       sel_urb<-input$filterUrban
-      full_data |> 
-        filter(urbanization %in% sel_urb)->full_data
+      res <- res |> filter(Urbanization %in% sel_urb)
     }
     
-    #RENAME COLUMNS
-    full_data |> 
-      rename(any_of(rename_map))->full_data
+    # Selection of columns to return
+    selected_vars_stud <- input$selected_vars
+    res <- res |> select(Institution, any_of(selected_vars_stud))
     
-    selected_vars_stud<-as.character(input$selected_vars)
-    full_data<-full_data |> 
-      select(INSTNM, all_of(selected_vars_stud))
-    
-    return(full_data)
+    return(res)
   })# End of reactive df
   
   #This outputs the data table that the student selects
@@ -794,14 +785,13 @@ server <- function(input, output, session) {
     req(nrow(filt_st_data()) > 0)
     
     # 1. Grab highlight data from FULL dataset (so it shows even if filtered out)
-    # We must rename columns to match the plotting data
+    # We must match the column structure of the filtered data
     high_df <- full_data |> 
-      filter(INSTNM %in% input$highlightSchool) |> 
-      rename(any_of(rename_map)) |> 
-      select(INSTNM, any_of(input$selected_vars))
+      filter(Institution %in% input$highlightSchool) |> 
+      select(Institution, any_of(input$selected_vars))
     
-    # drop inst name
-    plot_df <- filt_st_data() |> select(-INSTNM)
+    # drop inst name for plotting
+    plot_df <- filt_st_data() |> select(-Institution)
     
     # separate num vs cat
     num_cols <- names(which(sapply(plot_df, is.numeric)))
@@ -818,7 +808,7 @@ server <- function(input, output, session) {
         pivot_longer(cols = everything(), names_to = "Variable", values_to = "Value")
       
       p1 <- ggplot(df_num, aes(x = Value)) +
-        geom_histogram(fill = "steelblue", color = "white", bins = 30) +
+        geom_histogram(fill = "#2C3E50", color = "white", bins = 30) + # Used Theme Color
         facet_wrap(~Variable, scales = "free", ncol = 2) +
         theme_minimal() +
         labs(y = "Count", x = NULL)
@@ -826,11 +816,11 @@ server <- function(input, output, session) {
       # Add vertical line for highlights if they exist
       if(nrow(high_df) > 0) {
         high_num <- high_df |> 
-          select(INSTNM, all_of(num_cols)) |>
-          pivot_longer(cols = -INSTNM, names_to = "Variable", values_to = "Value")
+          select(Institution, all_of(num_cols)) |>
+          pivot_longer(cols = -Institution, names_to = "Variable", values_to = "Value")
         
         p1 <- p1 + geom_vline(data = high_num, 
-                              aes(xintercept = Value, color = INSTNM), 
+                              aes(xintercept = Value, color = Institution), 
                               size = 1.2, show.legend = TRUE)
       }
       
@@ -846,7 +836,7 @@ server <- function(input, output, session) {
         pivot_longer(cols = everything(), names_to = "Variable", values_to = "Value")
       
       p2 <- ggplot(df_cat, aes(x = Value)) +
-        geom_bar(fill = "darkgreen") +
+        geom_bar(fill = "#18BC9C") + # Used Theme Accent
         facet_wrap(~Variable, scales = "free", ncol = 2) +
         coord_flip() + # Flips text to be readable
         theme_minimal() +
@@ -855,13 +845,13 @@ server <- function(input, output, session) {
       # Add horizontal line (visually) for highlights if they exist
       if(nrow(high_df) > 0) {
         high_cat <- high_df |> 
-          select(INSTNM, all_of(cat_cols)) |>
-          mutate(across(-INSTNM, as.character)) |>
-          pivot_longer(cols = -INSTNM, names_to = "Variable", values_to = "Value")
+          select(Institution, all_of(cat_cols)) |>
+          mutate(across(-Institution, as.character)) |>
+          pivot_longer(cols = -Institution, names_to = "Variable", values_to = "Value")
         
         # Note: with coord_flip, geom_vline becomes horizontal visually
         p2 <- p2 + geom_vline(data = high_cat, 
-                              aes(xintercept = Value, color = INSTNM), 
+                              aes(xintercept = Value, color = Institution), 
                               size = 1.2, show.legend = TRUE)
       }
       
@@ -884,79 +874,79 @@ server <- function(input, output, session) {
     if(input$bvi_showRaceWhite == TRUE){
       min_w<-input$bvi_filterRaceWhite[1]
       max_w<-input$bvi_filterRaceWhite[2]
-      res <- res |> filter(PCT_WHITE>= min_w & PCT_WHITE<= max_w)
+      res <- res |> filter(`% White`>= min_w & `% White`<= max_w)
     }
     #Asian
     if(input$bvi_showRaceAsian == TRUE){
       min_a<-input$bvi_filterRaceAsian[1]
       max_a<-input$bvi_filterRaceAsian[2]
-      res <- res |> filter(UGDS_ASIAN>= min_a & UGDS_ASIAN<= max_a)
+      res <- res |> filter(`% Asian`>= min_a & `% Asian`<= max_a)
     }
     #Black
     if(input$bvi_showRaceBlack == TRUE){
       min_b<-input$bvi_filterRaceBlack[1]
       max_b<-input$bvi_filterRaceBlack[2]
-      res <- res |> filter(UGDS_BLACK>= min_b & UGDS_BLACK<= max_b)
+      res <- res |> filter(`% Black`>= min_b & `% Black`<= max_b)
     }
     #Hispanic
     if(input$bvi_showRaceHispanic == TRUE){
       min_h<-input$bvi_filterRaceHispanic[1]
       max_h<-input$bvi_filterRaceHispanic[2]
-      res <- res |> filter(UGDS_HISP>= min_h & UGDS_HISP<= max_h)
+      res <- res |> filter(`% Hispanic`>= min_h & `% Hispanic`<= max_h)
     }
     #Gender
     if(input$bvi_showGender == TRUE){
       min_f<-input$bvi_filterGender[1]
       max_f<-input$bvi_filterGender[2]
-      res <- res |> filter(FEMALE>= min_f & FEMALE<= max_f)
+      res <- res |> filter(`% Female`>= min_f & `% Female`<= max_f)
     }
     #First Gen
     if(input$bvi_showFirstGen == TRUE){
       min_g<-input$bvi_filterFirstGen[1]
       max_g<-input$bvi_filterFirstGen[2]
-      res <- res |> filter(FIRST_GEN>= min_g & FIRST_GEN<= max_g)
+      res <- res |> filter(`% First Gen`>= min_g & `% First Gen`<= max_g)
     }
     #SAT
     if(input$bvi_showSAT == TRUE){
       min_sat<-input$bvi_filterSAT[1]
       max_sat<-input$bvi_filterSAT[2]
-      res <- res |> filter(SAT_AVG>= min_sat & SAT_AVG<= max_sat)
+      res <- res |> filter(`SAT Average`>= min_sat & `SAT Average`<= max_sat)
     }
     #Admission Rate
     if(input$bvi_showAdmRate == TRUE){
       min_r<-input$bvi_filterAdmRate[1]
       max_r<-input$bvi_filterAdmRate[2]
-      res <- res |> filter(ADM_RATE>= min_r & ADM_RATE<= max_r)
+      res <- res |> filter(`Admission Rate`>= min_r & `Admission Rate`<= max_r)
     }
     #State
     if(input$bvi_showState == TRUE){
       sel_st<-input$bvi_filterState
-      res <- res |> filter(`State abbreviation` %in% sel_st)
+      res <- res |> filter(State %in% sel_st)
     }
     #Region
     if(input$bvi_showRegion == TRUE){
       sel_rg<-input$bvi_filterRegion
-      res <- res |> filter(`Bureau of Economic Analysis (BEA) regions` %in% sel_rg)
+      res <- res |> filter(Region %in% sel_rg)
     }
     #Public/Private
     if(input$bvi_showPublicPrivate == TRUE){
       sel_pub<-input$bvi_filterPublicPrivate
-      res <- res |> filter(pub_pri %in% sel_pub)
+      res <- res |> filter(Control %in% sel_pub)
     }
     #HBCU
     if(input$bvi_showHBCU == TRUE){
       sel_hbcu<-input$bvi_filterHBCU
-      res <- res |> filter(`Historically Black College or University` %in% sel_hbcu)
+      res <- res |> filter(HBCU %in% sel_hbcu)
     }
     #Religious
     if(input$bvi_showReligion == TRUE){
       sel_rlg<-input$bvi_filterReligion
-      res <- res |> filter(religion %in% sel_rlg)
+      res <- res |> filter(Religion %in% sel_rlg)
     }
     #Urbanization
     if(input$bvi_showUrban == TRUE){
       sel_urb<-input$bvi_filterUrban
-      res <- res |> filter(urbanization %in% sel_urb)
+      res <- res |> filter(Urbanization %in% sel_urb)
     }
     
     return(res)
@@ -965,7 +955,8 @@ server <- function(input, output, session) {
   # Average BVI Display
   output$bvi_avg_text <- renderText({
     req(nrow(filt_bvi_data()) > 0)
-    avg_val <- mean(filt_bvi_data()$Best_Value_Index, na.rm = TRUE)
+    # Using backticks because of spaces in variable name
+    avg_val <- mean(filt_bvi_data()$`Best Value Index`, na.rm = TRUE)
     paste("Average Best Value Index of Filtered Schools:", round(avg_val, 3))
   })
   
@@ -974,16 +965,16 @@ server <- function(input, output, session) {
     req(nrow(filt_bvi_data()) > 0)
     
     # Highlight data from FULL dataset (so it shows even if filtered out)
-    high_df <- full_data |> filter(INSTNM %in% input$bvi_highlightSchool)
+    high_df <- full_data |> filter(Institution %in% input$bvi_highlightSchool)
     
-    p <- ggplot(filt_bvi_data(), aes(x = Best_Value_Index)) +
-      geom_histogram(fill = "purple", color = "white", bins = 30) +
+    p <- ggplot(filt_bvi_data(), aes(x = `Best Value Index`)) +
+      geom_histogram(fill = "#18BC9C", color = "white", bins = 30) + # Updated to teal
       theme_minimal() +
       labs(x = "Best Value Index", y = "Count", title = "Distribution of Best Value Index")
     
     # Add vertical lines for highlighted schools
     if(nrow(high_df) > 0) {
-      p <- p + geom_vline(data = high_df, aes(xintercept = Best_Value_Index, color = INSTNM), 
+      p <- p + geom_vline(data = high_df, aes(xintercept = `Best Value Index`, color = Institution), 
                           size = 1.2, show.legend = TRUE)
     }
     p
@@ -995,7 +986,7 @@ server <- function(input, output, session) {
     
     # Select relevant BVI columns and original variables for context
     filt_bvi_data() |> 
-      select(INSTNM, Best_Value_Index, any_of(names(rename_map)))
+      select(Institution, `Best Value Index`, any_of(numeric_vars))
   }, options = list(pageLength = 10))
   
   
@@ -1006,66 +997,48 @@ server <- function(input, output, session) {
   map_data <- reactive({
     # Filter full_data based on the selected region from the dropdown
     full_data |> 
-      filter(`Bureau of Economic Analysis (BEA) regions` == input$mapRegion)
+      filter(Region == input$mapRegion)
   })
   
   # 3. Render the Leaflet Map
   output$collegeMap <- renderLeaflet({
     # Use the reactive data (map_data())
     leaflet(data = map_data()) |> 
-      addTiles() |>  # 
+      addTiles() |>  
       addCircleMarkers(
-        lng = ~LONGITUDE,
-        lat = ~LATITUDE,
+        lng = ~Longitude,
+        lat = ~Latitude,
         radius = 5, 
         color = "navy",
         stroke = FALSE,
         fillOpacity = 0.7,
         popup = ~paste0(
-          "<b>", INSTNM, "</b><br>",
-          "Admission Rate: ", round(ADM_RATE, 1), "%<br>",
-          "Average SAT: ", SAT_AVG, "<br>",
-          "Best Value Index: ", Best_Value_Index
+          "<b>", Institution, "</b><br>",
+          "Admission Rate: ", round(`Admission Rate`, 1), "%<br>",
+          "Average SAT: ", `SAT Average`, "<br>",
+          "Best Value Index: ", `Best Value Index`
         )
       )
   })
   
   # Server logic for 'Researchers and Administrators' tab...
-
+  
   
   
   
   # Research tab: Single variable exploration
-
-  sv_choices <- c(
-    "Graduation rate (150% time)"    = "C150_4",
-    "Admission Rate (%)"            = "ADM_RATE",
-    "Median Earnings After 10 Years"= "MD_EARN_WNE_P10",
-    "Tuition (In-state)"            = "TUITIONFEE_IN",
-    "Tuition (Out-of-state)"        = "TUITIONFEE_OUT",
-    "Median Debt at Graduation"     = "GRAD_DEBT_MDN",
-    "Average SAT"                   = "SAT_AVG",
-    "Average Cost (In-state)"       = "NPT4_PUB",
-    "Average Cost (Out-of-state)"   = "NPT4_PRIV",
-    "Best Value Index"              = "Best_Value_Index"
-  )
-  
-  get_sv_label <- function(code) {
-    nm <- names(sv_choices)[sv_choices == code]
-    if (length(nm) == 0) code else nm[1]
-  }
   
   sv_data <- reactive({
     df <- full_data
     
     # optional region filter
     if (input$sv_region != "All regions") {
-      df <- df |> dplyr::filter(`Bureau of Economic Analysis (BEA) regions` == input$sv_region)
+      df <- df |> dplyr::filter(Region == input$sv_region)
     }
     
     # optional school type filter
     if (input$sv_school_type != "All types") {
-      df <- df |> dplyr::filter(pub_pri == input$sv_school_type)
+      df <- df |> dplyr::filter(Control == input$sv_school_type)
     }
     
     # keep only rows with non-missing selected variable
@@ -1077,15 +1050,14 @@ server <- function(input, output, session) {
   
   # title above histogram (use readable label)
   output$sv_title <- renderText({
-    pretty_name <- get_sv_label(input$sv_var)
-    paste("Distribution of", pretty_name)
+    paste("Distribution of", input$sv_var)
   })
   
   # histogram of selected variable
   output$sv_hist <- renderPlot({
     df <- sv_data()
     x  <- df[[input$sv_var]]
-    pretty_name <- get_sv_label(input$sv_var)
+    pretty_name <- input$sv_var
     
     # optional log transform
     if (input$sv_log) {
@@ -1096,7 +1068,7 @@ server <- function(input, output, session) {
     }
     
     ggplot(data.frame(x = x), aes(x)) +
-      geom_histogram(bins = 30, fill = "steelblue", color = "white") +  # match student tab
+      geom_histogram(bins = 30, fill = "#2C3E50", color = "white") +  # Navy
       theme_minimal() +
       labs(
         title = paste("Histogram of", pretty_name),
@@ -1109,7 +1081,7 @@ server <- function(input, output, session) {
   output$sv_mean_text <- renderText({
     df <- sv_data()
     x  <- df[[input$sv_var]]
-    pretty_name <- get_sv_label(input$sv_var)
+    pretty_name <- input$sv_var
     
     if (input$sv_log) {
       mean_val <- mean(log10(x), na.rm = TRUE)
@@ -1121,13 +1093,13 @@ server <- function(input, output, session) {
   })
   
   
-
+  
   mv_data <- reactive({
     df <- full_data
     
     # optional region filter
     if (input$mv_region != "All regions") {
-      df <- df |> dplyr::filter(`Bureau of Economic Analysis (BEA) regions` == input$mv_region)
+      df <- df |> dplyr::filter(Region == input$mv_region)
     }
     
     # require x and y not missing
@@ -1154,7 +1126,7 @@ server <- function(input, output, session) {
     
     if (input$mv_group == "none") {
       ggplot(df, aes(x = .data[[input$mv_x]], y = .data[[input$mv_y]])) +
-        geom_point(alpha = 0.6, color = "steelblue") +        # match numeric student plots
+        geom_point(alpha = 0.6, color = "#2C3E50") +         # Navy
         theme_minimal() +
         labs(
           title = paste(input$mv_y, "vs", input$mv_x),
@@ -1168,7 +1140,7 @@ server <- function(input, output, session) {
                  color = as.factor(.data[[input$mv_group]]))) +
         geom_point(alpha = 0.6) +
         scale_color_manual(
-          values = c("steelblue", "darkgreen", "purple", "navy")
+          values = c("#2C3E50", "#18BC9C", "#3498DB", "#E74C3C", "#F39C12") # Professional Palette
         ) +
         theme_minimal() +
         labs(
@@ -1191,7 +1163,7 @@ server <- function(input, output, session) {
                fill = as.factor(.data[[input$mv_group]]))) +
       geom_boxplot(alpha = 0.8) +
       scale_fill_manual(
-        values = c("steelblue", "darkgreen", "purple", "navy")
+        values = c("#2C3E50", "#18BC9C", "#3498DB", "#E74C3C", "#F39C12")
       ) +
       theme_minimal() +
       labs(
@@ -1229,22 +1201,23 @@ server <- function(input, output, session) {
   
   
   # Research tab: Model Testing
-
+  
   mt_data <- reactive({
     df <- full_data
     
     # optional region filter
     if (input$mt_region != "All regions") {
-      df <- df |> dplyr::filter(`Bureau of Economic Analysis (BEA) regions` == input$mt_region)
+      df <- df |> dplyr::filter(Region == input$mt_region)
     }
     
     # optional school type filter
     if (input$mt_school_type != "All types") {
-      df <- df |> dplyr::filter(pub_pri == input$mt_school_type)
+      df <- df |> dplyr::filter(Control == input$mt_school_type)
     }
     
     # response + predictors
-    vars <- c("C150_4", input$mt_predictors)
+    # Outcome is "Graduation Rate" (Nice Name)
+    vars <- c("Graduation Rate", input$mt_predictors)
     
     df <- df |>
       dplyr::select(dplyr::all_of(vars)) |>
@@ -1258,10 +1231,12 @@ server <- function(input, output, session) {
   mt_fit <- eventReactive(input$mt_fit, {
     df <- mt_data()
     
-    # build formula like "C150_4 ~ ADM_RATE + TUITIONFEE_IN + ..."
-    form <- as.formula(
-      paste("C150_4 ~", paste(input$mt_predictors, collapse = " + "))
-    )
+    # build formula like "`Graduation Rate` ~ `Admission Rate` + `Tuition` + ..."
+    # We must wrap names in backticks
+    preds_safe <- paste(paste0("`", input$mt_predictors, "`"), collapse = " + ")
+    outcome_safe <- "`Graduation Rate`"
+    
+    form <- as.formula(paste(outcome_safe, "~", preds_safe))
     
     lm(form, data = df)
   })
@@ -1274,7 +1249,7 @@ server <- function(input, output, session) {
     r2     <- s$r.squared
     
     cat("Interpretation in context:\n")
-    cat("• The model predicts 6-year graduation rate (C150_4) from your selected predictors.\n")
+    cat("• The model predicts Graduation Rate from your selected predictors.\n")
     cat("• R-squared ≈", round(r2 * 100, 1),
         "%, meaning the model explains about that percent of the variation in graduation rates\n",
         "  across the filtered set of institutions.\n")
@@ -1305,8 +1280,7 @@ server <- function(input, output, session) {
   
   # Server logic for 'Data Table' tab...
   full_table_data <- reactive({
-    full_data |>
-      rename(any_of(rename_map))
+    full_data
   })
   
   output$full_table <- renderDT({
