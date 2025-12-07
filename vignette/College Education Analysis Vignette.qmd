@@ -25,10 +25,10 @@ The general structure of the final processed data consists of a single data fram
 
 ## Part 4: EDA Inputs, Controls, and Outputs
 
-The student tab primarily handles the exploratory data analysis. The app initially opens to the intro tab which gives a description of what the app is for. An actor that uses the app as a student or a parent trying to choose a good college would then switch over to the Students and Parents tab. This tab is made up of 3 sub-tabs, including variable exploration, best value index, and map.
-If a student is searching wants to find a good East-Coast private school that has less than a 60% acceptance rate, they can begin to filter for their criteria in the left sidebar panel. The top of the sidebar panel will let them pick their variable(s) of interest, with a default of admission rate. If a student wants to look at the competitiveness of getting into the school, they will leave the default variable and continue to other filters that decrease their dataset. 
+The student tab primarily handles the exploratory data analysis. The app initially opens to the intro tab which gives a description of what the app is for. An actor that uses the app as a student or a parent trying to choose a good college would then switch over to the Students and Parents tab. This tab is made up of 3 sub-tabs, including variable exploration, best value index, and map. If a student is searching wants to find a good East-Coast private school that has less than a 60% acceptance rate, they can begin to filter for their criteria in the left sidebar panel. The top of the sidebar panel will let them pick their variable(s) of interest, with a default of admission rate. If a student wants to look at the competitiveness of getting into the school, they will leave the default variable and continue to other filters that decrease their dataset.
 
 Here is a code chunk example of some of the user input filters
+
 ```{r}
 #| include: false
 #| eval: false
@@ -46,16 +46,17 @@ Here is a code chunk example of some of the user input filters
                                value = c(0, 100), post = "%")
                           )
 ```
-The above filters, like most of our filters, fist make a user check a box to choose to filter by the variable, and then a slider input drops down allowing actors to select a range. 
+
+The above filters, like most of our filters, fist make a user check a box to choose to filter by the variable, and then a slider input drops down allowing actors to select a range.
 
 ![Filters](../images/SS_filter.png){#fig-element}
 
-@fig-element shows what it looks like to select a filter and be able to change a slider input. 
+@fig-element shows what it looks like to select a filter and be able to change a slider input.
 
-Assuming our user filters by region and selects New England, filters by school type and selects private, and filters by admission rate and slides to less than 60%, they will see a graph and data table in the main panel with their filtered schools.  
+Assuming our user filters by region and selects New England, filters by school type and selects private, and filters by admission rate and slides to less than 60%, they will see a graph and data table in the main panel with their filtered schools.
 
-A student can look at the names and corresponding admission rate of each college that fits their filters. They can also see a graph of the distribution of admission rates in their filtered colleges. 
-The main panel UI coding looks as follows: 
+A student can look at the names and corresponding admission rate of each college that fits their filters. They can also see a graph of the distribution of admission rates in their filtered colleges. The main panel UI coding looks as follows:
+
 ```{r}
 #| include: false
 #| eval: false
@@ -68,13 +69,14 @@ mainPanel(
 
 ```
 
-A student may also decide their top two schools are Dartmouth and NYU. At the bottom of the school filters they can enter those two in "highlight specific schools". The schools will show up as highlighted lines on their outputted graph. 
+A student may also decide their top two schools are Dartmouth and NYU. At the bottom of the school filters they can enter those two in "highlight specific schools". The schools will show up as highlighted lines on their outputted graph.
 
 ![Highlighting](../images/SS_highlight.png){#fig-high}
 
-@fig-high shows what the highlighted schools look like on this actor's filtered list of schools. 
+@fig-high shows what the highlighted schools look like on this actor's filtered list of schools.
 
-To show highlighted schools on our graph we used a geom vline. 
+To show highlighted schools on our graph we used a geom vline.
+
 ```{r}
 #| include: false
 #| eval: false
@@ -84,13 +86,14 @@ p1 <- p1 + geom_vline(data = high_num,
                       size = 1.2, show.legend = TRUE)
 ```
 
-After a student explores their schools admission rates, they can switch to the BVI tab to filter their schools and see the best value index score. 
+After a student explores their schools admission rates, they can switch to the BVI tab to filter their schools and see the best value index score.
 
 ![BVI](../images/SS_bvi.png){#fig-bvi}
 
-@fig-bvi shows how what a graph of BVI's looks like with the highlighted schools. 
+@fig-bvi shows how what a graph of BVI's looks like with the highlighted schools.
 
-Lastly, a user can switch to the map tab to filter for their region (New England) and look at their preferred locations to see colleges they may not have considered. 
+Lastly, a user can switch to the map tab to filter for their region (New England) and look at their preferred locations to see colleges they may not have considered.
+
 ```{r}
 #| include: false
 #| eval: false
