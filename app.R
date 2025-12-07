@@ -83,7 +83,7 @@ full_data <- raw_data |>
     
     # Ensure categorical consistency
     HBCU               = ifelse(HBCU == 1, "Yes", "No"),
-    # Check if Hispanic Serving exists, handle gracefully
+    # Check if Hispanic Serving exists
     `Hispanic Serving` = if("Hispanic Serving" %in% names(raw_data)) ifelse(`Hispanic Serving` == 1, "Yes", "No") else "No"
   )
 
