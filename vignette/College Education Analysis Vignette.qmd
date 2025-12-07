@@ -1,26 +1,77 @@
 ---
-title: "Vignette"
-format: html
+title: "College Education Analysis Vignette"
+format:
+  html:
+    embedded-resources: true
 editor: visual
 ---
 
-## Quarto
+# College Education Analysis Vignette
 
-Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+DATA-613: Jon Cote
 
-## Running Code
+DATA-413: Camden Egan, Jack Markert, John Dye, Shae Ramberg
 
-When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+## Part 2
 
-```{r}
-1 + 1
-```
+## Part 3
 
-You can add options to executable code like this
+##  Part 4: Data Source and Structure
 
-```{r}
-#| echo: false
-2 * 2
-```
+The default data source for this analysis is a consolidated dataset drawn from the U.S. Department of Education's College Scorecard (2022-2023 academic year) and the Integrated Postsecondary Education Data System (IPEDS). These sources provide comprehensive institutional characteristics, graduation rates, and financial metrics. To ensure a focused and relevant analysis, we have filtered the raw data to include only 4-year, public or private non-profit institutions that are currently operating, predominantly bachelor's-degree granting, and enroll more than 100 undergraduate students.
 
-The `echo: false` option disables the printing of code (only output is displayed).
+The general structure of the final processed data consists of a single data frame containing 1,865 observations (institutions) and 62 variables. The dataset includes key identifiers and location details such as the institution name (`INSTNM`), unit ID (`unitid`), city (`CITY`), state (`STABBR`), and geographic coordinates. It features categorical variables describing institutional control (Public vs. Private Non-profit) and special designations like Historically Black Colleges and Universities (`HBCU`) or Hispanic-Serving Institutions (`HSI`). The data also tracks quantitative student metrics, including demographics (`UGDS_MEN`, `UGDS_WOMEN`), academic performance (`SAT_AVG`, `ADM_RATE`), and completion rates (`C150_4`), alongside financial variables such as in-state and out-of-state tuition (`TUITIONFEE_IN`, `TUITIONFEE_OUT`), median graduate debt (`GRAD_DEBT_MDN`), and post-entry earnings (`MD_EARN_WNE_P10`).
+
+## Part 5
+
+##  Part 6
+
+##  Part 7
+
+## Part 8: Individual Contributions
+
+-   **Jon Cote**
+
+    -   Found and cleaned the initial data.
+
+    -   Developed the Models tab.
+
+    -   Co-developed the Research tab (with John).
+
+    -   Collaborated on the Multivariable analysis (with John).
+
+-   **John Dye**
+
+    -   Managed the Single Variable analysis.
+
+    -   Co-developed the Research tab (with Jon).
+
+    -   Collaborated on the Multivariable analysis (with Jon).
+
+-   **Camden Egan**
+
+    -   Created the Intro Tab.
+
+    -   Built the Interactive Data Table.
+
+    -   Led app cohesion and appearance.
+
+    -   Provided technical assistance to other group members.
+
+-   **Jack Markert**
+
+    -   Found and cleaned the updated data.
+
+    -   Developed the geospatial Map feature.
+
+    -   Collaborated on the Student tab (with Shae).
+
+    -   Collaborated on the BVI section (with Shae).
+
+-   **Shae Ramberg**
+
+    -   Led the Exploratory Analysis.
+
+    -   Collaborated on the Student tab (with Jack).
+
+    -   Collaborated on the BVI section (with Jack).
