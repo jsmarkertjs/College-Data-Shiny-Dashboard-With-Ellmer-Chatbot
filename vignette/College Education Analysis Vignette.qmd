@@ -16,7 +16,7 @@ DATA-413: Camden Egan, Jack Markert, John Dye, Shae Ramberg
 
 ## Part 3
 
-##  Part 4: Data Source and Structure
+## Part 4: Data Source and Structure
 
 The default data source for this analysis is a consolidated dataset drawn from the U.S. Department of Education's College Scorecard (2022-2023 academic year) and the Integrated Postsecondary Education Data System (IPEDS). These sources provide comprehensive institutional characteristics, graduation rates, and financial metrics. To ensure a focused and relevant analysis, we have filtered the raw data to include only 4-year, public or private non-profit institutions that are currently operating, predominantly bachelor's-degree granting, and enroll more than 100 undergraduate students.
 
@@ -24,9 +24,9 @@ The general structure of the final processed data consists of a single data fram
 
 ## Part 5
 
-##  Part 6
+## Part 6
 
-##  Part 7
+## Part 7
 
 ## Part 8: Individual Contributions
 
