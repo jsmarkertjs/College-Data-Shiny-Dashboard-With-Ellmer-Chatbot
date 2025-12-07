@@ -107,13 +107,13 @@ school_choices   <- sort(unique(full_data$Institution))
 
 # Define the Theme
 my_theme <- bs_theme(
-  version = 5,               # Use Bootstrap 5 (Modern)
-  bootswatch = "flatly",     # Professional base theme
-  primary = "#2C3E50",       # Deep Navy Blue (Professional)
-  secondary = "#18BC9C",     # Teal Accent (Modern)
+  version = 5,               
+  bootswatch = "flatly",     
+  primary = "#2C3E50",       
+  secondary = "#18BC9C",     
   base_font = font_google("Roboto"),
   heading_font = font_google("Montserrat"),
-  "card-cap-bg" = "#2C3E50"  # Dark headers for cards
+  "card-cap-bg" = "#2C3E50"  
 )
 
 ui <- navbarPage(

@@ -47,7 +47,7 @@ Here is a code chunk example of some of the user input filters
                           )
 ```
 
-The above filters, like most of our filters, fist make a user check a box to choose to filter by the variable, and then a slider input drops down allowing actors to select a range.
+The above filters, like most of our filters, first make a user check a box to choose to filter by the variable, and then a slider input drops down allowing actors to select a range.
 
 ![Filters](../images/SS_filter.png){#fig-element}
 
@@ -75,7 +75,7 @@ A student may also decide their top two schools are Dartmouth and NYU. At the bo
 
 @fig-high shows what the highlighted schools look like on this actor's filtered list of schools.
 
-To show highlighted schools on our graph we used a geom vline.
+To show highlighted schools on our graph we used a geom_vline.
 
 ```{r}
 #| include: false
@@ -123,7 +123,7 @@ output$collegeMap <- renderLeaflet({
 
 @fig-map shows our map tab with a blue dot for all universities in New England. The user can click on any dot to get information on each university.
 
-## Part 5: Statistical Analysis Inputs, Controls, and Outputs (jon)
+## Part 5: Statistical Analysis Inputs, Controls, and Outputs (Jon)
 
 ## Part 6: References
 
