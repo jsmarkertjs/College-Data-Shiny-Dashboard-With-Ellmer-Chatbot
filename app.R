@@ -176,7 +176,7 @@ ui <- navbarPage(
               tags$a(
                 href = "#",
                 onclick = "switchToTab('Students and Parents'); return false;",
-                "Students & Families",
+                "Students & Parents",
                 style = "color: #18BC9C; font-weight: bold;"
               )
             ),
