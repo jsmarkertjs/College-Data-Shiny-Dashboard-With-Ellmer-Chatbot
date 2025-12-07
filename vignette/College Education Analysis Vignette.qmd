@@ -31,6 +31,7 @@ If a student is searching wants to find a good East-Coast private school that ha
 Here is a code chunk example of some of the user input filters
 ```{r}
 #| include: false
+#| eval: false
  h4("Academics"),
   checkboxInput("showSAT", "Filter by SAT Score"),
   conditionalPanel(
@@ -47,16 +48,17 @@ Here is a code chunk example of some of the user input filters
 ```
 The above filters, like most of our filters, fist make a user check a box to choose to filter by the variable, and then a slider input drops down allowing actors to select a range. 
 
-[ss showing filters]
+![Filters](../images/SS_filter.png){#fig-element}
+
+@fig-element shows what it looks like to select a filter and be able to change a slider input. 
 
 Assuming our user filters by region and selects New England, filters by school type and selects private, and filters by admission rate and slides to less than 60%, they will see a graph and data table in the main panel with their filtered schools.  
-
-[ss showing datatable]
 
 A student can look at the names and corresponding admission rate of each college that fits their filters. They can also see a graph of the distribution of admission rates in their filtered colleges. 
 The main panel UI coding looks as follows: 
 ```{r}
 #| include: false
+#| eval: false
 mainPanel(
   h4("Variable Exploration"),
   h5("Filtered Colleges with Variable(s) of Interest:"),
@@ -68,11 +70,14 @@ mainPanel(
 
 A student may also decide their top two schools are Dartmouth and NYU. At the bottom of the school filters they can enter those two in "highlight specific schools". The schools will show up as highlighted lines on their outputted graph. 
 
-[SS of graph and highlighted schools]
+![Highlighting](../images/SS_highlight.png){#fig-high}
+
+@fig-high shows what the highlighted schools look like on this actor's filtered list of schools. 
 
 To show highlighted schools on our graph we used a geom vline. 
 ```{r}
 #| include: false
+#| eval: false
 p1 <- p1 + geom_vline(data = high_num, 
                       aes(xintercept = Value, 
                           color = Institution), 
@@ -81,11 +86,14 @@ p1 <- p1 + geom_vline(data = high_num,
 
 After a student explores their schools admission rates, they can switch to the BVI tab to filter their schools and see the best value index score. 
 
-[ss of bvi graph]
+![BVI](../images/SS_bvi.png){#fig-bvi}
+
+@fig-bvi shows how what a graph of BVI's looks like with the highlighted schools. 
 
 Lastly, a user can switch to the map tab to filter for their region (New England) and look at their preferred locations to see colleges they may not have considered. 
 ```{r}
 #| include: false
+#| eval: false
 #Here is the code used for creating the map:
 output$collegeMap <- renderLeaflet({
     # Use the reactive data (map_data())
@@ -108,9 +116,9 @@ output$collegeMap <- renderLeaflet({
   })
 ```
 
-[ss of map]
+![Map](../images/SS_map.png){#fig-map}
 
-describing how to use the features of the app to generate results and then interpret the results. Figures are captioned and cross-referenced.
+@fig-map shows our map tab with a blue dot for all universities in New England. The user can click on any dot to get information on each university.
 
 ## Part 5: Statistical Analysis Inputs, Controls, and Outputs (jon)
 
