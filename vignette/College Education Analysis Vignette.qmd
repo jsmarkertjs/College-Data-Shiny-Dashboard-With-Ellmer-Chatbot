@@ -4,6 +4,7 @@ format:
   html:
     embedded-resources: true
 editor: visual
+license: "CC BY-NC"
 ---
 
 # College Education Analysis Vignette

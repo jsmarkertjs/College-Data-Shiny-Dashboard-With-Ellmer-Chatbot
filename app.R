@@ -1,3 +1,7 @@
+# College Education Analysis Dashboard
+# Licensed under CC BY-NC 4.0
+# Authors: Jon Cote, John Dye, Camden Egan, Jack Markert, Shae Ramberg
+
 library(shiny)
 library(readr)
 library(dplyr)
