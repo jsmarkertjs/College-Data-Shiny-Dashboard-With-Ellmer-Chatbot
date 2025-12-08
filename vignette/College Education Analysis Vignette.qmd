@@ -168,6 +168,172 @@ output$collegeMap <- renderLeaflet({
 
 ## Part 5: Statistical Analysis Inputs, Controls, and Outputs (Jon)
 
+The Statistical Analysis tools of the College Education Analysis app are designed for researchers, administrators, and policy analysts who want to formally test relationships between institutional characteristics and student outcomes. These tools are located in the Researchers and Administrators tab and consist of three components: Single Variable Exploration, Multi-Variable Exploration, and Model Testing. This section focuses on how users apply the Multi-Variable Exploration and Model Testing tools to generate and interpret statistical results.
+
+**Statistical Analysis Scenario**
+
+A common research question that can be addressed using this section of the app is:
+
+Do more selective and higher-value institutions tend to have higher graduation rates after accounting for earnings and cost?
+
+To answer this, the researcher first explores bivariate relationships using the Multi-Variable Exploration tool and then fits a multiple linear regression model using the Model Testing tool.
+
+**Multi-Variable Analysis: Inputs and Controls**
+
+In the Multi-Variable Exploration subtab, users are given the following controls:
+
+-   X Variable (mv_x): Numeric predictor selected from numeric_vars
+
+-   Y Variable (mv_y): Numeric outcome selected from numeric_vars
+
+-   Grouping Variable (mv_group): Optional categorical grouping
+
+-   Control (Public vs Private)
+
+-   Region
+
+-   HBCU status
+
+-   Region Filter (mv_region): Restricts analysis to one region or all regions
+
+For this scenario, the researcher selects:
+
+-   X Variable = Admission Rate
+
+-   Y Variable = Graduation Rate
+
+-   Grouping Variable = Control (Public vs Private)
+
+-   Region = All regions
+
+Once these inputs are selected, the app removes observations with missing data and generates a scatterplot, a grouped boxplot, and a formal statistical test.
+
+```{r}
+#| include: false
+#| eval: false
+
+mv_data <- full_data |>
+  filter(!is.na(ADM_RATE),
+         !is.na(C150_4),
+         !is.na(Control))
+```
+
+```{r}
+#| include: false
+#| eval: false
+#| label: fig-mv-scatter
+#| fig-cap: "Scatterplot of admission rate versus graduation rate, grouped by public and private institutions."
+ggplot(mv_data, aes(x = ADM_RATE, y = C150_4, color = Control)) +
+  geom_point(alpha = 0.6) +
+  theme_minimal() +
+  labs(
+    x = "Admission Rate",
+    y = "Graduation Rate (150% time)",
+    color = "School Type"
+  )
+
+```
+
+As shown in Figure @fig-mv-scatter, there is a clear negative association between admission rate and graduation rate, indicating that more selective institutions tend to have higher graduation rates. The color grouping allows for direct visual comparison between public and private institutions.
+
+To compare completion rates across school types, the app also produces a boxplot:
+
+```{r}
+#| include: false
+#| eval: false
+#| label: fig-mv-box
+#| fig-cap: "Boxplot comparing graduation rates between public and private institutions."
+ggplot(mv_data, aes(x = Control, y = C150_4)) +
+  geom_boxplot() +
+  theme_minimal() +
+  labs(
+    x = "School Type",
+    y = "Graduation Rate (150% time)"
+  )
+```
+
+Figure @fig-mv-box shows that private institutions generally exhibit higher median graduation rates than public institutions.
+
+Because the grouping variable has two levels, the app automatically performs a two-sample t-test to evaluate whether this difference is statistically significant:
+
+```{r}
+#| include: false
+#| eval: false
+t.test(C150_4 ~ Control, data = mv_data)
+```
+
+This test allows the researcher to formally determine whether the observed sector differences in graduation rates are unlikely to be due to random variation alone.
+
+**Model Testing: Inputs and Controls**
+
+After exploring pairwise relationships, the researcher moves to the Model Testing subtab to fit a multiple linear regression model predicting graduation rate. In this section, the response variable is fixed as Graduation Rate (C150_4). The user selects predictors from numeric_vars and applies optional filters.
+
+Available controls include:
+
+-   Predictor Variables (mt_predictors): Multiple numeric predictors
+
+-   Region Filter (mt_region)
+
+-   School Type (mt_school_type)
+
+-   Fit Regression Model Button (mt_fit)
+
+For this scenario, the researcher selects:
+
+-   Predictors: Admission Rate, Median Earnings After 10 Years, Best Value Index
+
+-   Region: All regions
+
+-   School Type: Public
+
+The following R code reproduces the regression model constructed by the app:
+
+```{r}
+#| include: false
+#| eval: false
+reg_data <- full_data |>
+  filter(Control == "Public") |>
+  select(C150_4, ADM_RATE, MD_EARN_WNE_P10, Best_Value_Index) |>
+  filter(if_all(everything(), ~ !is.na(.)))
+
+model_example <- lm(
+  C150_4 ~ ADM_RATE + MD_EARN_WNE_P10 + Best_Value_Index,
+  data = reg_data
+)
+
+summary(model_example)
+```
+
+**Statistical Outputs and Interpretation**
+
+The Model Testing subtab produces two coordinated outputs:
+
+-   Model Summary Output Displays coefficient estimates, standard errors, t-statistics, p-values, R-squared, adjusted R-squared, and the overall F-statistic.
+
+-   Coefficient Table Output A formatted table of regression coefficients for interpretation.
+
+```{r}
+#| include: false
+#| eval: false
+#| label: fig-mt-coefs
+#| fig-cap: "Regression coefficient table predicting graduation rate for public institutions."
+coef_table <- as.data.frame(coef(summary(model_example)))
+coef_table
+
+```
+
+Figure @fig-mt-coefs summarizes the estimated effect of each predictor on graduation rate while holding all other predictors constant. Interpretation of the model follows standard regression logic:
+
+-   A negative coefficient on Admission Rate indicates that more selective institutions tend to have higher graduation rates.
+
+-   A positive coefficient on Median Earnings After 10 Years suggests that institutions whose graduates earn more also tend to exhibit higher completion rates.
+
+-   A positive coefficient on Best Value Index indicates that institutions providing stronger earnings relative to cost and debt show improved student success.
+
+-   The Adjusted R-squared quantifies how much of the variation in graduation rates is explained by the selected predictors.
+
+By adjusting predictors, regions, and school type filters, researchers can compare how institutional drivers of graduation outcomes vary across geographic and sector contexts. This enables the app to support evidence-based institutional planning, benchmarking, and higher-education policy analysis.
+
 ## Part 6: References
 
 Below are our 3 relevant literature reviews with full citations:
