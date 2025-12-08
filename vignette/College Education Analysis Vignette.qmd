@@ -13,9 +13,17 @@ DATA-613: Jon Cote
 
 DATA-413: Camden Egan, Jack Markert, John Dye, Shae Ramberg
 
-## Part 1: Use Case (camden)
+College Education Analysis is an interactive website built with Shiny that helps students, families, and college staff explore information about four‑year colleges in the United States. It lets people look at costs, student debt, earnings after graduation, and graduation rates so they can find good‑value schools and study what makes students more likely to finish college.
 
-## Part 2: Required Packages (camden)
+## Part 1: Use Case
+
+For students and families, the main goal is to find colleges that give strong results for a reasonable cost. On the Student tab, users can choose filters such as region, state, public or private, and how urban or rural the campus is, then see numbers like tuition, typical student debt, and average earnings 10 years after graduation, along with a Best Value Index that compares earnings to the combined net cost and debt. They can mark specific schools as favorites so those schools stand out in tables and graphs, and they can use an interactive map to look for schools in certain locations while seeing each school’s Best Value Index and other details when they hover over a point.
+
+For college researchers, administrators, and policy makers, the tool is meant to help them understand how school characteristics are linked to student success. On the Researcher tab, they can first look at one variable at a time, such as faculty salary or net price, to see how it is spread across schools in a region. Then they can move to tools that show how two or more variables are related and run simple statistical tests to compare groups. In the modeling section, they can set graduation rate as the outcome and choose predictors like tuition, admission rate, average faculty salary, student demographics, debt, and earnings to fit regression models and see the results in clear tables and charts that support planning and policy choices.
+
+## Part 2: Required Packages
+
+The app uses **Shiny** to run the interactive website, with buttons, sliders, and tabs that respond to user choices in real time. It uses **readr**, **dplyr**, and other **tidyverse** tools to read in the College Scorecard data, create new measures like `NET_COST_CALC` and `Best_Value_Index`, rename columns to more understandable labels, and build lists of options for drop‑down menus. Graphs and interactive displays are created with **ggplot2**, **DT** for filterable and sortable data tables, and **leaflet** for an interactive map of U.S. colleges where users can hover over points to see Best Value Index and other values. The package **gridExtra** is used to arrange multiple ggplot figures on a single page (for example, stacking numeric and categorical plots together) so they can be shown as a combined display in the app. The overall look and feel of the app, including colors and styles for plots, is controlled with **bslib** and **thematic** so that everything has a consistent, easy‑to‑read design.
 
 ## Part 3: Data Source and Structure
 
