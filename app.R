@@ -9,17 +9,17 @@ library(leaflet)
 library(DT)
 library(tidyverse)
 library(gridExtra)
-library(bslib)     
-library(thematic)  
+library(bslib)      
+library(thematic)   
 
-# 1. Load Data
+# Load Data
 raw_data <- read_csv("./data/college_scorecard_11-21.csv")
 
-# 2. Pre-calculation for Best Value Index (using raw names before rename)
+# Pre-calculation for Best Value Index (using raw names before rename)
 raw_data <- raw_data |>
   mutate(
     # Create NET_COST based on control (Public vs Private)
-    # CONTROL: 1=Public, 2=Private nonprofit, 3=Private for-profit
+    # CONTROL: 1=Public, 2=Private nonprofit
     NET_COST_CALC = case_when(
       CONTROL == 1 ~ NPT4_PUB,
       CONTROL %in% c(2) ~ NPT4_PRIV,
@@ -29,7 +29,7 @@ raw_data <- raw_data |>
     Best_Value_Index = round(MD_EARN_WNE_P10 / (NET_COST_CALC + GRAD_DEBT_MDN), 3)
   )
 
-# 3. Define the Master Mapping (Nice Name = Old Name)
+# Define the Master Mapping 
 rename_mapping <- c(
   "Institution"                    = "INSTNM",
   "Admission Rate"                 = "ADM_RATE",
@@ -66,12 +66,12 @@ rename_mapping <- c(
   "Best Value Index"               = "Best_Value_Index"
 )
 
-# 4. Apply changes 
+# Apply changes 
 full_data <- raw_data |> 
   select(-any_of("HBCU")) |> 
   rename(any_of(rename_mapping)) |> 
   mutate(
-    # Fix percentages (using the new names)
+    # Fix percentages 
     `Admission Rate`   = `Admission Rate` * 100,
     `% Asian`          = `% Asian` * 100,
     `% Black`          = `% Black` * 100,
@@ -87,12 +87,16 @@ full_data <- raw_data |>
     `Hispanic Serving` = if("Hispanic Serving" %in% names(raw_data)) ifelse(`Hispanic Serving` == 1, "Yes", "No") else "No"
   )
 
-# 5. Helper vectors for UI Choices
+# Helper vectors for UI Choices
+#original numeric_vars (Removed "Urbanization") for Researchers Tab
 numeric_vars <- c("Admission Rate", "Graduation Rate", "Median Earnings After 10 Years", 
                   "Tuition (In-state)", "Tuition (Out-of-state)", "Median Debt at Graduation", 
                   "SAT Average", "Faculty Salary", "Entry Age", "Best Value Index",
                   "% First Gen", "% Female", 
                   "% Asian", "% Black", "% Hispanic", "% White")
+
+# list specifically for the Students Tab that includes Urbanization
+student_vars <- c(numeric_vars, "Urbanization")
 
 state_choices    <- sort(unique(full_data$State))
 region_choices   <- sort(unique(full_data$Region))
@@ -107,13 +111,13 @@ school_choices   <- sort(unique(full_data$Institution))
 
 # Define the Theme
 my_theme <- bs_theme(
-  version = 5,               
-  bootswatch = "flatly",     
-  primary = "#2C3E50",       
-  secondary = "#18BC9C",     
+  version = 5,                
+  bootswatch = "flatly",      
+  primary = "#2C3E50",        
+  secondary = "#18BC9C",      
   base_font = font_google("Roboto"),
   heading_font = font_google("Montserrat"),
-  "card-cap-bg" = "#2C3E50"  
+  "card-cap-bg" = "#2C3E50"   
 )
 
 ui <- navbarPage(
@@ -176,7 +180,7 @@ ui <- navbarPage(
               tags$a(
                 href = "#",
                 onclick = "switchToTab('Students and Parents'); return false;",
-                "Students & Parents",
+                "Students & Families",
                 style = "color: #18BC9C; font-weight: bold;"
               )
             ),
@@ -248,246 +252,136 @@ ui <- navbarPage(
   
   # --- Main Tab 2: Students and Parents ---
   tabPanel("Students and Parents",
-           tabsetPanel(
-             
-             # Sub-tab 2a - Variable Exploration
-             tabPanel("Variable Exploration",
-                      sidebarLayout(
-                        sidebarPanel(
-                          h3("Variable(s) of Interest"),
-                          selectInput("selected_vars", "Select Variable(s):",
-                                      choices=numeric_vars, 
-                                      multiple = TRUE, selected="Admission Rate"),
-                          
-                          
-                          h3("School Filtering"),
-                          #Filtering by demographics: race, gender, firstgen
-                          h4("Demographics"),
-                          checkboxInput("showRaceWhite", "Filter by % White"),
-                          conditionalPanel(
-                            "input.showRaceWhite == true",
-                            sliderInput("filterRaceWhite", "Percent White", 
-                                        min = 0, max = 100, value = c(0, 100), post = "%")
-                          ),
-                          checkboxInput("showRaceAsian", "Filter by % Asian"),
-                          conditionalPanel(
-                            "input.showRaceAsian == true",
-                            sliderInput("filterRaceAsian", "Percent Asian", 
-                                        min = 0, max = 100, value = c(0, 100), post = "%")
-                          ),
-                          checkboxInput("showRaceBlack", "Filter by % Black"),
-                          conditionalPanel(
-                            "input.showRaceBlack == true",
-                            sliderInput("filterRaceBlack", "Percent Black", 
-                                        min = 0, max = 100, value = c(0, 100), post = "%")
-                          ),
-                          checkboxInput("showRaceHispanic", "Filter by % Hispanic"),
-                          conditionalPanel(
-                            "input.showRaceHispanic == true",
-                            sliderInput("filterRaceHispanic", "Percent Hispanic", 
-                                        min = 0, max = 100, value = c(0, 100), post = "%")
-                          ),
-                          checkboxInput("showGender", "Filter by % Female"),
-                          conditionalPanel(
-                            "input.showGender == true",
-                            sliderInput("filterGender", "Percent Female", 
-                                        min = 0, max = 100, value = c(0, 100), post = "%")
-                          ),
-                          checkboxInput("showFirstGen", "Filter by % First Gen"),
-                          conditionalPanel(
-                            "input.showFirstGen == true",
-                            sliderInput("filterFirstGen", "Percent First Gen", 
-                                        min = 0, max = 100, value = c(0, 100), post = "%")
-                          ),
-                          h4("Academics"),
-                          checkboxInput("showSAT", "Filter by SAT Score"),
-                          conditionalPanel(
-                            "input.showSAT == true",
-                            sliderInput("filterSAT", "SAT Average Range", 
-                                        min = 400, max = 1600, value = c(400, 1600))
-                          ),
-                          checkboxInput("showAdmRate", "Filter by Admission Rate"),
-                          conditionalPanel(
-                            "input.showAdmRate == true",
-                            sliderInput("filterAdmRate", "Admission Rate", 
-                                        min = 0, max = 100, value = c(0, 100), post = "%")
-                          ),
-                          h4("Location"),
-                          # State
-                          checkboxInput("showState", "Filter by State"),
-                          conditionalPanel(
-                            "input.showState == true",
-                            selectizeInput("filterState", "State(s)", 
-                                           choices = state_choices, multiple = TRUE)
-                          ),
-                          # Region
-                          checkboxInput("showRegion", "Filter by Region"),
-                          conditionalPanel(
-                            "input.showRegion == true",
-                            selectizeInput("filterRegion", "Region(s)", 
-                                           choices = region_choices, multiple = TRUE)
-                          ),
-                          h4("Characteristics"),
-                          #Public/Private
-                          checkboxInput("showPublicPrivate", "Filter by School Type"),
-                          conditionalPanel(
-                            "input.showPublicPrivate == true",
-                            radioButtons("filterPublicPrivate", "School Type", 
-                                         choices = c("Public", "Private not-for-profit"))
-                          ),
-                          # HBCU
-                          checkboxInput("showHBCU", "Filter by HBCU Status"),
-                          conditionalPanel(
-                            "input.showHBCU == true",
-                            radioButtons("filterHBCU", "HBCU Status", 
-                                         choices = c("Yes", "No"))
-                          ),
-                          # Religion
-                          checkboxInput("showReligion", "Filter by Religious Affiliation"),
-                          conditionalPanel(
-                            "input.showReligion == true",
-                            selectizeInput("filterReligion", "Religious Affiliation(s)", 
-                                           choices = religion_choices, multiple = TRUE)
-                          ),
-                          # Degree of Urbanization
-                          checkboxInput("showUrban", "Filter by Urbanization"),
-                          conditionalPanel(
-                            "input.showUrban == true",
-                            selectizeInput("filterUrban", "Degree of Urbanization", 
-                                           choices = urban_choices, multiple = TRUE)
-                          ),
-                          #Highlight Select Schools
-                          h3("Highlight Specific Schools"),
-                          h4("Select up to 5 schools to highlight:"),
-                          selectizeInput(
-                            inputId = "highlightSchool",
-                            label = "Select School(s):",
-                            choices = school_choices,
-                            multiple = TRUE,
-                            options=list(maxItems=5)
-                          )
-                        ), #End of sidebar Panel Student Exporatory Section
-                        mainPanel(
+           sidebarLayout(
+             sidebarPanel(
+               h3("Variable(s) of Interest"),
+               # UPDATED: Uses 'student_vars' which includes Urbanization
+               selectInput("selected_vars", "Select Variable(s):",
+                           choices=student_vars, 
+                           multiple = TRUE, selected="Admission Rate"),
+               
+               
+               h3("School Filtering"),
+               #Filtering by demographics: race, gender, firstgen
+               h4("Demographics"),
+               checkboxInput("showRaceWhite", "Filter by % White"),
+               conditionalPanel(
+                 "input.showRaceWhite == true",
+                 sliderInput("filterRaceWhite", "Percent White", 
+                             min = 0, max = 100, value = c(0, 100), post = "%")
+               ),
+               checkboxInput("showRaceAsian", "Filter by % Asian"),
+               conditionalPanel(
+                 "input.showRaceAsian == true",
+                 sliderInput("filterRaceAsian", "Percent Asian", 
+                             min = 0, max = 100, value = c(0, 100), post = "%")
+               ),
+               checkboxInput("showRaceBlack", "Filter by % Black"),
+               conditionalPanel(
+                 "input.showRaceBlack == true",
+                 sliderInput("filterRaceBlack", "Percent Black", 
+                             min = 0, max = 100, value = c(0, 100), post = "%")
+               ),
+               checkboxInput("showRaceHispanic", "Filter by % Hispanic"),
+               conditionalPanel(
+                 "input.showRaceHispanic == true",
+                 sliderInput("filterRaceHispanic", "Percent Hispanic", 
+                             min = 0, max = 100, value = c(0, 100), post = "%")
+               ),
+               checkboxInput("showGender", "Filter by % Female"),
+               conditionalPanel(
+                 "input.showGender == true",
+                 sliderInput("filterGender", "Percent Female", 
+                             min = 0, max = 100, value = c(0, 100), post = "%")
+               ),
+               checkboxInput("showFirstGen", "Filter by % First Gen"),
+               conditionalPanel(
+                 "input.showFirstGen == true",
+                 sliderInput("filterFirstGen", "Percent First Gen", 
+                             min = 0, max = 100, value = c(0, 100), post = "%")
+               ),
+               h4("Academics"),
+               checkboxInput("showSAT", "Filter by SAT Score"),
+               conditionalPanel(
+                 "input.showSAT == true",
+                 sliderInput("filterSAT", "SAT Average Range", 
+                             min = 400, max = 1600, value = c(400, 1600))
+               ),
+               checkboxInput("showAdmRate", "Filter by Admission Rate"),
+               conditionalPanel(
+                 "input.showAdmRate == true",
+                 sliderInput("filterAdmRate", "Admission Rate", 
+                             min = 0, max = 100, value = c(0, 100), post = "%")
+               ),
+               h4("Location"),
+               # State
+               checkboxInput("showState", "Filter by State"),
+               conditionalPanel(
+                 "input.showState == true",
+                 selectizeInput("filterState", "State(s)", 
+                                choices = state_choices, multiple = TRUE)
+               ),
+               # Region
+               checkboxInput("showRegion", "Filter by Region"),
+               conditionalPanel(
+                 "input.showRegion == true",
+                 selectizeInput("filterRegion", "Region(s)", 
+                                choices = region_choices, multiple = TRUE)
+               ),
+               h4("Characteristics"),
+               #Public/Private
+               checkboxInput("showPublicPrivate", "Filter by School Type"),
+               conditionalPanel(
+                 "input.showPublicPrivate == true",
+                 radioButtons("filterPublicPrivate", "School Type", 
+                              choices = c("Public", "Private not-for-profit"))
+               ),
+               # HBCU
+               checkboxInput("showHBCU", "Filter by HBCU Status"),
+               conditionalPanel(
+                 "input.showHBCU == true",
+                 radioButtons("filterHBCU", "HBCU Status", 
+                              choices = c("Yes", "No"))
+               ),
+               # Religion
+               checkboxInput("showReligion", "Filter by Religious Affiliation"),
+               conditionalPanel(
+                 "input.showReligion == true",
+                 selectizeInput("filterReligion", "Religious Affiliation(s)", 
+                                choices = religion_choices, multiple = TRUE)
+               ),
+               # Degree of Urbanization
+               checkboxInput("showUrban", "Filter by Urbanization"),
+               conditionalPanel(
+                 "input.showUrban == true",
+                 selectizeInput("filterUrban", "Degree of Urbanization", 
+                                choices = urban_choices, multiple = TRUE)
+               ),
+               #Highlight Select Schools
+               h3("Highlight Specific Schools"),
+               h4("Select up to 5 schools to highlight:"),
+               selectizeInput(
+                 inputId = "highlightSchool",
+                 label = "Select School(s):",
+                 choices = school_choices,
+                 multiple = TRUE,
+                 options=list(maxItems=5)
+               )
+             ), #End of sidebar Panel Student Exporatory Section
+             mainPanel(
+               tabsetPanel(
+                 
+                 # Sub-tab 2a - Variable Exploration
+                 tabPanel("Variable Exploration",
                           h4("Variable Exploration"),
                           h5("Filtered Colleges with Variable(s) of Interest:"),
                           DTOutput("st_df"),
                           h5("Graphs of Variables of Interest:"),
                           plotOutput("st_plots")
-                        )
-                      )),
-             
-             # Sub-tab 2b
-             tabPanel("Best Value Index",
-                      sidebarLayout(
-                        sidebarPanel(
-                          h3("School Filtering (BVI)"),
-                          #Filtering by demographics: race, gender, firstgen
-                          h4("Demographics"),
-                          checkboxInput("bvi_showRaceWhite", "Filter by % White"),
-                          conditionalPanel(
-                            "input.bvi_showRaceWhite == true",
-                            sliderInput("bvi_filterRaceWhite", "Percent White", 
-                                        min = 0, max = 100, value = c(0, 100), post = "%")
-                          ),
-                          checkboxInput("bvi_showRaceAsian", "Filter by % Asian"),
-                          conditionalPanel(
-                            "input.bvi_showRaceAsian == true",
-                            sliderInput("bvi_filterRaceAsian", "Percent Asian", 
-                                        min = 0, max = 100, value = c(0, 100), post = "%")
-                          ),
-                          checkboxInput("bvi_showRaceBlack", "Filter by % Black"),
-                          conditionalPanel(
-                            "input.bvi_showRaceBlack == true",
-                            sliderInput("bvi_filterRaceBlack", "Percent Black", 
-                                        min = 0, max = 100, value = c(0, 100), post = "%")
-                          ),
-                          checkboxInput("bvi_showRaceHispanic", "Filter by % Hispanic"),
-                          conditionalPanel(
-                            "input.bvi_showRaceHispanic == true",
-                            sliderInput("bvi_filterRaceHispanic", "Percent Hispanic", 
-                                        min = 0, max = 100, value = c(0, 100), post = "%")
-                          ),
-                          checkboxInput("bvi_showGender", "Filter by % Female"),
-                          conditionalPanel(
-                            "input.bvi_showGender == true",
-                            sliderInput("bvi_filterGender", "Percent Female", 
-                                        min = 0, max = 100, value = c(0, 100), post = "%")
-                          ),
-                          checkboxInput("bvi_showFirstGen", "Filter by % First Gen"),
-                          conditionalPanel(
-                            "input.bvi_showFirstGen == true",
-                            sliderInput("bvi_filterFirstGen", "Percent First Gen", 
-                                        min = 0, max = 100, value = c(0, 100), post = "%")
-                          ),
-                          h4("Academics"),
-                          checkboxInput("bvi_showSAT", "Filter by SAT Score"),
-                          conditionalPanel(
-                            "input.bvi_showSAT == true",
-                            sliderInput("bvi_filterSAT", "SAT Average Range", 
-                                        min = 400, max = 1600, value = c(400, 1600))
-                          ),
-                          checkboxInput("bvi_showAdmRate", "Filter by Admission Rate"),
-                          conditionalPanel(
-                            "input.bvi_showAdmRate == true",
-                            sliderInput("bvi_filterAdmRate", "Admission Rate", 
-                                        min = 0, max = 100, value = c(0, 100), post = "%")
-                          ),
-                          h4("Location"),
-                          # State
-                          checkboxInput("bvi_showState", "Filter by State"),
-                          conditionalPanel(
-                            "input.bvi_showState == true",
-                            selectizeInput("bvi_filterState", "State(s)", 
-                                           choices = state_choices, multiple = TRUE)
-                          ),
-                          # Region
-                          checkboxInput("bvi_showRegion", "Filter by Region"),
-                          conditionalPanel(
-                            "input.bvi_showRegion == true",
-                            selectizeInput("bvi_filterRegion", "Region(s)", 
-                                           choices = region_choices, multiple = TRUE)
-                          ),
-                          h4("Characteristics"),
-                          #Public/Private
-                          checkboxInput("bvi_showPublicPrivate", "Filter by School Type"),
-                          conditionalPanel(
-                            "input.bvi_showPublicPrivate == true",
-                            radioButtons("bvi_filterPublicPrivate", "School Type", 
-                                         choices = c("Public", "Private not-for-profit"))
-                          ),
-                          # HBCU
-                          checkboxInput("bvi_showHBCU", "Filter by HBCU Status"),
-                          conditionalPanel(
-                            "input.bvi_showHBCU == true",
-                            radioButtons("bvi_filterHBCU", "HBCU Status", 
-                                         choices = c("Yes", "No"))
-                          ),
-                          # Religion
-                          checkboxInput("bvi_showReligion", "Filter by Religious Affiliation"),
-                          conditionalPanel(
-                            "input.bvi_showReligion == true",
-                            selectizeInput("bvi_filterReligion", "Religious Affiliation(s)", 
-                                           choices = religion_choices, multiple = TRUE)
-                          ),
-                          # Degree of Urbanization
-                          checkboxInput("bvi_showUrban", "Filter by Urbanization"),
-                          conditionalPanel(
-                            "input.bvi_showUrban == true",
-                            selectizeInput("bvi_filterUrban", "Degree of Urbanization", 
-                                           choices = urban_choices, multiple = TRUE)
-                          ),
-                          #Highlight Select Schools
-                          h3("Highlight Specific Schools"),
-                          h4("Select up to 5 schools to highlight:"),
-                          selectizeInput(
-                            inputId = "bvi_highlightSchool",
-                            label = "Select School(s):",
-                            choices = school_choices,
-                            multiple = TRUE,
-                            options=list(maxItems=5)
-                          )
-                        ),
-                        mainPanel(
+                 ),
+                 
+                 # Sub-tab 2b
+                 tabPanel("Best Value Index",
                           h3("Best Value Index Analysis"),
                           h4(textOutput("bvi_avg_text")),
                           br(),
@@ -496,24 +390,13 @@ ui <- navbarPage(
                           br(),
                           h5("Distribution of Best Value Index:"),
                           plotOutput("bvi_hist")
-                        )
-                      )
-             ),
-             
-             tabPanel("Map",
-                      sidebarLayout(
-                        sidebarPanel(
-                          h3("Map Filters"),
-                          # Input for selecting the Region
-                          selectInput("mapRegion", "Select Region:", 
-                                      choices = region_choices,
-                                      selected = region_choices[1])
-                        ),
-                        mainPanel(
+                 ),
+                 
+                 tabPanel("Map",
                           # The output for the leaflet map
                           leafletOutput("collegeMap", height = "600px")
-                        )
-                      )
+                 )
+               )
              )
            )
   ),
@@ -530,6 +413,7 @@ ui <- navbarPage(
                           helpText("Choose one numeric variable and optional filters, then inspect its distribution."),
                           
                           # numeric variable to explore
+                          # KEPT AS ORIGINAL: Uses numeric_vars (No Urbanization)
                           selectInput(
                             inputId = "sv_var",
                             label   = "Numeric variable:",
@@ -590,10 +474,10 @@ ui <- navbarPage(
                             inputId = "mv_group",
                             label   = "Grouping variable (for tests/boxplots):",
                             choices = c(
-                              "None"                          = "none",
-                              "Public vs Private"             = "Control",
-                              "Region"                        = "Region",
-                              "HBCU status"                   = "HBCU"
+                              "None"                                  = "none",
+                              "Public vs Private"                     = "Control",
+                              "Region"                                = "Region",
+                              "HBCU status"                           = "HBCU"
                             ),
                             selected = "none"
                           ),
@@ -678,7 +562,7 @@ ui <- navbarPage(
 # --- Define the Server Logic ---
 server <- function(input, output, session) {
   
-  # NEW: Apply thematic styling to plots automatically
+  # Apply thematic styling to plots automatically
   thematic_shiny()
   
   # Server logic for 'Students and Parents' tab...
@@ -772,7 +656,7 @@ server <- function(input, output, session) {
     
     # Selection of columns to return
     selected_vars_stud <- input$selected_vars
-    res <- res |> select(Institution, any_of(selected_vars_stud))
+    res <- res |> select(Institution, `Best Value Index`, Latitude, Longitude, any_of(selected_vars_stud))
     
     return(res)
   })# End of reactive df
@@ -780,7 +664,10 @@ server <- function(input, output, session) {
   #This outputs the data table that the student selects
   output$st_df<-renderDT({
     validate(need(nrow(filt_st_data()) > 0, "You have filtered out all of the Colleges. Please widen your search."))
-    filt_st_data()
+    # Only show selected vars in table
+    selected <- input$selected_vars
+    if(is.null(selected)) selected <- names(filt_st_data())[1:5]
+    filt_st_data() |> select(Institution, any_of(selected))
   },
   options = list(pageLength=10)) #End of Student DF print
   
@@ -788,18 +675,22 @@ server <- function(input, output, session) {
   output$st_plots <- renderPlot({
     req(nrow(filt_st_data()) > 0)
     
-    # 1. Grab highlight data from FULL dataset (so it shows even if filtered out)
+    # Grab highlight data from FULL dataset (so it shows even if filtered out)
     # We must match the column structure of the filtered data
     high_df <- full_data |> 
       filter(Institution %in% input$highlightSchool) |> 
       select(Institution, any_of(input$selected_vars))
     
     # drop inst name for plotting
-    plot_df <- filt_st_data() |> select(-Institution)
+    plot_df <- filt_st_data() |> select(any_of(input$selected_vars))
     
     # separate num vs cat
     num_cols <- names(which(sapply(plot_df, is.numeric)))
     cat_cols <- names(which(!sapply(plot_df, is.numeric)))
+    
+    # Keep only selected columns
+    num_cols <- intersect(num_cols, input$selected_vars)
+    cat_cols <- intersect(cat_cols, input$selected_vars)
     
     # list of plots
     plot_list <- list()
@@ -815,12 +706,14 @@ server <- function(input, output, session) {
         geom_histogram(fill = "#2C3E50", color = "white", bins = 30) + # Used Theme Color
         facet_wrap(~Variable, scales = "free", ncol = 2) +
         theme_minimal() +
-        labs(y = "Count", x = NULL)
+        labs(y = "Count", x = NULL) +
+        # INCREASED TITLE SIZE HERE
+        theme(strip.text = element_text(size = 16, face = "bold")) 
       
       # Add vertical line for highlights if they exist
       if(nrow(high_df) > 0) {
         high_num <- high_df |> 
-          select(Institution, all_of(num_cols)) |>
+          select(Institution, any_of(num_cols)) |>
           pivot_longer(cols = -Institution, names_to = "Variable", values_to = "Value")
         
         p1 <- p1 + geom_vline(data = high_num, 
@@ -844,7 +737,9 @@ server <- function(input, output, session) {
         facet_wrap(~Variable, scales = "free", ncol = 2) +
         coord_flip() + # Flips text to be readable
         theme_minimal() +
-        labs(y = "Count", x = NULL)
+        labs(y = "Count", x = NULL) +
+        # INCREASED TITLE SIZE HERE
+        theme(strip.text = element_text(size = 16, face = "bold"))
       
       # Add horizontal line (visually) for highlights if they exist
       if(nrow(high_df) > 0) {
@@ -870,111 +765,27 @@ server <- function(input, output, session) {
   
   # --- BVI Logic (Independent from Variable Exploration) ---
   
-  # Reactive dataframe for BVI tab
-  filt_bvi_data <- reactive({
-    res <- full_data
-    
-    #White
-    if(input$bvi_showRaceWhite == TRUE){
-      min_w<-input$bvi_filterRaceWhite[1]
-      max_w<-input$bvi_filterRaceWhite[2]
-      res <- res |> filter(`% White`>= min_w & `% White`<= max_w)
-    }
-    #Asian
-    if(input$bvi_showRaceAsian == TRUE){
-      min_a<-input$bvi_filterRaceAsian[1]
-      max_a<-input$bvi_filterRaceAsian[2]
-      res <- res |> filter(`% Asian`>= min_a & `% Asian`<= max_a)
-    }
-    #Black
-    if(input$bvi_showRaceBlack == TRUE){
-      min_b<-input$bvi_filterRaceBlack[1]
-      max_b<-input$bvi_filterRaceBlack[2]
-      res <- res |> filter(`% Black`>= min_b & `% Black`<= max_b)
-    }
-    #Hispanic
-    if(input$bvi_showRaceHispanic == TRUE){
-      min_h<-input$bvi_filterRaceHispanic[1]
-      max_h<-input$bvi_filterRaceHispanic[2]
-      res <- res |> filter(`% Hispanic`>= min_h & `% Hispanic`<= max_h)
-    }
-    #Gender
-    if(input$bvi_showGender == TRUE){
-      min_f<-input$bvi_filterGender[1]
-      max_f<-input$bvi_filterGender[2]
-      res <- res |> filter(`% Female`>= min_f & `% Female`<= max_f)
-    }
-    #First Gen
-    if(input$bvi_showFirstGen == TRUE){
-      min_g<-input$bvi_filterFirstGen[1]
-      max_g<-input$bvi_filterFirstGen[2]
-      res <- res |> filter(`% First Gen`>= min_g & `% First Gen`<= max_g)
-    }
-    #SAT
-    if(input$bvi_showSAT == TRUE){
-      min_sat<-input$bvi_filterSAT[1]
-      max_sat<-input$bvi_filterSAT[2]
-      res <- res |> filter(`SAT Average`>= min_sat & `SAT Average`<= max_sat)
-    }
-    #Admission Rate
-    if(input$bvi_showAdmRate == TRUE){
-      min_r<-input$bvi_filterAdmRate[1]
-      max_r<-input$bvi_filterAdmRate[2]
-      res <- res |> filter(`Admission Rate`>= min_r & `Admission Rate`<= max_r)
-    }
-    #State
-    if(input$bvi_showState == TRUE){
-      sel_st<-input$bvi_filterState
-      res <- res |> filter(State %in% sel_st)
-    }
-    #Region
-    if(input$bvi_showRegion == TRUE){
-      sel_rg<-input$bvi_filterRegion
-      res <- res |> filter(Region %in% sel_rg)
-    }
-    #Public/Private
-    if(input$bvi_showPublicPrivate == TRUE){
-      sel_pub<-input$bvi_filterPublicPrivate
-      res <- res |> filter(Control %in% sel_pub)
-    }
-    #HBCU
-    if(input$bvi_showHBCU == TRUE){
-      sel_hbcu<-input$bvi_filterHBCU
-      res <- res |> filter(HBCU %in% sel_hbcu)
-    }
-    #Religious
-    if(input$bvi_showReligion == TRUE){
-      sel_rlg<-input$bvi_filterReligion
-      res <- res |> filter(Religion %in% sel_rlg)
-    }
-    #Urbanization
-    if(input$bvi_showUrban == TRUE){
-      sel_urb<-input$bvi_filterUrban
-      res <- res |> filter(Urbanization %in% sel_urb)
-    }
-    
-    return(res)
-  })
-  
   # Average BVI Display
   output$bvi_avg_text <- renderText({
-    req(nrow(filt_bvi_data()) > 0)
+    req(nrow(filt_st_data()) > 0)
     # Using backticks because of spaces in variable name
-    avg_val <- mean(filt_bvi_data()$`Best Value Index`, na.rm = TRUE)
+    avg_val <- mean(filt_st_data()$`Best Value Index`, na.rm = TRUE)
     paste("Average Best Value Index of Filtered Schools:", round(avg_val, 3))
   })
   
   # BVI Histogram
   output$bvi_hist <- renderPlot({
-    req(nrow(filt_bvi_data()) > 0)
+    req(nrow(filt_st_data()) > 0)
     
     # Highlight data from FULL dataset (so it shows even if filtered out)
-    high_df <- full_data |> filter(Institution %in% input$bvi_highlightSchool)
+    high_df <- full_data |> filter(Institution %in% input$highlightSchool)
     
-    p <- ggplot(filt_bvi_data(), aes(x = `Best Value Index`)) +
+    p <- ggplot(filt_st_data(), aes(x = `Best Value Index`)) +
       geom_histogram(fill = "#18BC9C", color = "white", bins = 30) + # Updated to teal
       theme_minimal() +
-      labs(x = "Best Value Index", y = "Count", title = "Distribution of Best Value Index")
+      labs(x = "Best Value Index", y = "Count", title = "Distribution of Best Value Index") +
+      # INCREASED TITLE SIZE HERE
+      theme(plot.title = element_text(size = 20, face = "bold"))
     
     # Add vertical lines for highlighted schools
     if(nrow(high_df) > 0) {
@@ -986,10 +797,10 @@ server <- function(input, output, session) {
   
   # BVI Data Table
   output$bvi_df <- renderDT({
-    validate(need(nrow(filt_bvi_data()) > 0, "No colleges match your criteria."))
+    validate(need(nrow(filt_st_data()) > 0, "No colleges match your criteria."))
     
     # Select relevant BVI columns and original variables for context
-    filt_bvi_data() |> 
+    filt_st_data() |> 
       select(Institution, `Best Value Index`, any_of(numeric_vars))
   }, options = list(pageLength = 10))
   
@@ -997,17 +808,26 @@ server <- function(input, output, session) {
   
   # --- Server Logic for Map (Sub-tab 2c) ---
   
-  # 1. Create a reactive dataset for the map that filters by Region
-  map_data <- reactive({
-    # Filter full_data based on the selected region from the dropdown
-    full_data |> 
-      filter(Region == input$mapRegion)
-  })
-  
-  # 3. Render the Leaflet Map
+  # 3Render the Leaflet Map
   output$collegeMap <- renderLeaflet({
-    # Use the reactive data (map_data())
-    leaflet(data = map_data()) |> 
+    # Use the reactive data (filt_st_data())
+    
+    # Dynamic Popup Construction
+    data_map <- filt_st_data() |> filter(!is.na(Latitude), !is.na(Longitude))
+    
+    popup_content <- paste0("<b>", data_map$Institution, "</b>")
+    
+    # Loop through selected vars to add to popup
+    vars_to_show <- input$selected_vars
+    if (length(vars_to_show) > 0) {
+      for (var in vars_to_show) {
+        values <- data_map[[var]]
+        if (is.numeric(values)) { values <- round(values, 2) }
+        popup_content <- paste0(popup_content, "<br>", var, ": ", values)
+      }
+    }
+    
+    leaflet(data = data_map) |> 
       addTiles() |>  
       addCircleMarkers(
         lng = ~Longitude,
@@ -1016,12 +836,7 @@ server <- function(input, output, session) {
         color = "navy",
         stroke = FALSE,
         fillOpacity = 0.7,
-        popup = ~paste0(
-          "<b>", Institution, "</b><br>",
-          "Admission Rate: ", round(`Admission Rate`, 1), "%<br>",
-          "Average SAT: ", `SAT Average`, "<br>",
-          "Best Value Index: ", `Best Value Index`
-        )
+        popup = popup_content
       )
   })
   
@@ -1052,7 +867,7 @@ server <- function(input, output, session) {
     df
   })
   
-  # title above histogram (use readable label)
+  # title above histogram 
   output$sv_title <- renderText({
     paste("Distribution of", input$sv_var)
   })
@@ -1081,7 +896,7 @@ server <- function(input, output, session) {
       )
   })
   
-  # mean display (use readable label)
+  # mean display 
   output$sv_mean_text <- renderText({
     df <- sv_data()
     x  <- df[[input$sv_var]]
@@ -1113,7 +928,7 @@ server <- function(input, output, session) {
         !is.na(.data[[input$mv_y]])
       )
     
-    # if grouping variable selected, require it not missing AND present
+    # if grouping variable selected, require it not missing and present
     if (input$mv_group != "none") {
       validate(need(input$mv_group %in% names(df),
                     "Selected grouping variable is not found in the data."))
@@ -1144,7 +959,7 @@ server <- function(input, output, session) {
                  color = as.factor(.data[[input$mv_group]]))) +
         geom_point(alpha = 0.6) +
         scale_color_manual(
-          values = c("#2C3E50", "#18BC9C", "#3498DB", "#E74C3C", "#F39C12") # Professional Palette
+          values = c("#2C3E50", "#18BC9C", "#3498DB", "#E74C3C", "#F39C12", "#9B59B6", "#1ABC9C", "#ECF0F1", "#34495E", "#95A5A6") 
         ) +
         theme_minimal() +
         labs(
@@ -1156,7 +971,7 @@ server <- function(input, output, session) {
     }
   })
   
-  # boxplot by group (only when group selected)
+  # boxplot by group 
   output$mv_boxplot <- renderPlot({
     req(input$mv_group != "none")
     df <- mv_data()
@@ -1167,7 +982,7 @@ server <- function(input, output, session) {
                fill = as.factor(.data[[input$mv_group]]))) +
       geom_boxplot(alpha = 0.8) +
       scale_fill_manual(
-        values = c("#2C3E50", "#18BC9C", "#3498DB", "#E74C3C", "#F39C12")
+        values = c("#2C3E50", "#18BC9C", "#3498DB", "#E74C3C", "#F39C12", "#9B59B6", "#1ABC9C", "#ECF0F1", "#34495E", "#95A5A6")
       ) +
       theme_minimal() +
       labs(

@@ -33,18 +33,18 @@ Here is a code chunk example of some of the user input filters
 #| include: false
 #| eval: false
  h4("Academics"),
-  checkboxInput("showSAT", "Filter by SAT Score"),
-  conditionalPanel(
-    "input.showSAT == true",
-    sliderInput("filterSAT", "SAT Average Range", min = 400, 
-                max = 1600, value = c(400, 1600))
-  ),
-  checkboxInput("showAdmRate", "Filter by Admission Rate"),
-  conditionalPanel("input.showAdmRate == true",
-                   sliderInput("filterAdmRate", "Admission Rate",
-                               min = 0, max = 100, 
-                               value = c(0, 100), post = "%")
-                          )
+checkboxInput("showSAT", "Filter by SAT Score"),
+conditionalPanel(
+  "input.showSAT == true",
+  sliderInput("filterSAT", "SAT Average Range", 
+              min = 400, max = 1600, value = c(400, 1600))
+),
+checkboxInput("showAdmRate", "Filter by Admission Rate"),
+conditionalPanel(
+  "input.showAdmRate == true",
+  sliderInput("filterAdmRate", "Admission Rate", 
+              min = 0, max = 100, value = c(0, 100), post = "%")
+)
 ```
 
 The above filters, like most of our filters, first make a user check a box to choose to filter by the variable, and then a slider input drops down allowing actors to select a range.
@@ -61,12 +61,35 @@ A student can look at the names and corresponding admission rate of each college
 #| include: false
 #| eval: false
 mainPanel(
-  h4("Variable Exploration"),
-  h5("Filtered Colleges with Variable(s) of Interest:"),
-  DTOutput("st_df"),
-  h5("Graphs of Variables of Interest:"),
-  plotOutput("st_plots"))
-
+  tabsetPanel(
+    
+    # Sub-tab 2a - Variable Exploration
+    tabPanel("Variable Exploration",
+             h4("Variable Exploration"),
+             h5("Filtered Colleges with Variable(s) of Interest:"),
+             DTOutput("st_df"),
+             h5("Graphs of Variables of Interest:"),
+             plotOutput("st_plots")
+    ),
+    
+    # Sub-tab 2b
+    tabPanel("Best Value Index",
+             h3("Best Value Index Analysis"),
+             h4(textOutput("bvi_avg_text")),
+             br(),
+             h5("Filtered Data Table:"),
+             DTOutput("bvi_df"),
+             br(),
+             h5("Distribution of Best Value Index:"),
+             plotOutput("bvi_hist")
+    ),
+    
+    tabPanel("Map",
+             # The output for the leaflet map
+             leafletOutput("collegeMap", height = "600px")
+    )
+  )
+)
 ```
 
 A student may also decide their top two schools are Dartmouth and NYU. At the bottom of the school filters they can enter those two in "highlight specific schools". The schools will show up as highlighted lines on their outputted graph.
@@ -92,36 +115,48 @@ After a student explores their schools admission rates, they can switch to the B
 
 @fig-bvi shows how what a graph of BVI's looks like with the highlighted schools.
 
-Lastly, a user can switch to the map tab to filter for their region (New England) and look at their preferred locations to see colleges they may not have considered.
+Lastly, a user can switch to the map tab to filter and look at their preferred locations to see colleges they may not have considered based more on location.
 
 ```{r}
 #| include: false
 #| eval: false
 #Here is the code used for creating the map:
+# 3Render the Leaflet Map
 output$collegeMap <- renderLeaflet({
-    # Use the reactive data (map_data())
-    leaflet(data = map_data()) |> 
-      addTiles() |>  
-      addCircleMarkers(
-        lng = ~Longitude,
-        lat = ~Latitude,
-        radius = 5, 
-        color = "navy",
-        stroke = FALSE,
-        fillOpacity = 0.7,
-        popup = ~paste0(
-          "<b>", Institution, "</b><br>",
-          "Admission Rate: ", round(`Admission Rate`, 1), "%<br>",
-          "Average SAT: ", `SAT Average`, "<br>",
-          "Best Value Index: ", `Best Value Index`
-        )
-      )
-  })
+  # Use the reactive data (filt_st_data())
+  
+  # Dynamic Popup Construction
+  data_map <- filt_st_data() |> filter(!is.na(Latitude), !is.na(Longitude))
+  
+  popup_content <- paste0("<b>", data_map$Institution, "</b>")
+  
+  # Loop through selected vars to add to popup
+  vars_to_show <- input$selected_vars
+  if (length(vars_to_show) > 0) {
+    for (var in vars_to_show) {
+      values <- data_map[[var]]
+      if (is.numeric(values)) { values <- round(values, 2) }
+      popup_content <- paste0(popup_content, "<br>", var, ": ", values)
+    }
+  }
+  
+  leaflet(data = data_map) |> 
+    addTiles() |>  
+    addCircleMarkers(
+      lng = ~Longitude,
+      lat = ~Latitude,
+      radius = 5, 
+      color = "navy",
+      stroke = FALSE,
+      fillOpacity = 0.7,
+      popup = popup_content
+    )
+})
 ```
 
 ![Map](../images/SS_map.png){#fig-map}
 
-@fig-map shows our map tab with a blue dot for all universities in New England. The user can click on any dot to get information on each university.
+@fig-map shows our map tab with a blue dot for all universities in New England. The user can click on any dot to get selected information on each university.
 
 ## Part 5: Statistical Analysis Inputs, Controls, and Outputs (Jon)
 
@@ -153,19 +188,13 @@ The study by Steven W. Hemelt and Dave E. Marcotte (2011) provides foundational 
 
     -   Found and cleaned the initial data.
 
-    -   Developed the Models tab.
+    -   Developed the Researcher tabs.
 
-    -   Co-developed the Research tab (with John).
-
-    -   Collaborated on the Multivariable analysis (with John).
+    -   Wrote the Statistical Analysis section (Input, Control, Output) for the vignette.
 
 -   **John Dye**
 
-    -   Managed the Single Variable analysis.
-
-    -   Co-developed the Research tab (with Jon).
-
-    -   Collaborated on the Multivariable analysis (with Jon).
+    -   Found and cleaned the initial data.
 
 -   **Camden Egan**
 
@@ -173,9 +202,7 @@ The study by Steven W. Hemelt and Dave E. Marcotte (2011) provides foundational 
 
     -   Built the Interactive Data Table.
 
-    -   Led app cohesion and appearance.
-
-    -   Provided technical assistance to other group members.
+    -   Wrote the Header, Use Case, and Packages sections for the vignette.
 
 -   **Jack Markert**
 
@@ -183,14 +210,14 @@ The study by Steven W. Hemelt and Dave E. Marcotte (2011) provides foundational 
 
     -   Developed the geospatial Map feature.
 
-    -   Collaborated on the Student tab (with Shae).
+    -   Collaborated on the Student tabs and BVI section (with Shae).
 
-    -   Collaborated on the BVI section (with Shae).
+    -   Wrote the Data Source and Structure and Individual Contributions sections for the vignette.
 
 -   **Shae Ramberg**
 
-    -   Led the Exploratory Analysis.
+    -   Led the Exploratory Analysis in Student Tabs.
 
-    -   Collaborated on the Student tab (with Jack).
+    -   Collaborated on the Student tabs and BVI section (with Jack).
 
-    -   Collaborated on the BVI section (with Jack).
+    -   Wrote the EDA section (Input, Control, Output) and Literature Reviews for the vignette
