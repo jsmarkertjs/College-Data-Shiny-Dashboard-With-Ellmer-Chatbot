@@ -13,8 +13,6 @@ DATA-613: Jon Cote
 
 DATA-413: Camden Egan, Jack Markert, John Dye, Shae Ramberg
 
-College Education Analysis is an interactive website built with Shiny that helps students, families, and college staff explore information about four‑year colleges in the United States. It lets people look at costs, student debt, earnings after graduation, and graduation rates so they can find good‑value schools and study what makes students more likely to finish college.
-
 ## Part 1: Use Case
 
 For students and families, the main goal is to find colleges that give strong results for a reasonable cost. On the Student tab, users can choose filters such as region, state, public or private, and how urban or rural the campus is, then see numbers like tuition, typical student debt, and average earnings 10 years after graduation, along with a Best Value Index that compares earnings to the combined net cost and debt. They can mark specific schools as favorites so those schools stand out in tables and graphs, and they can use an interactive map to look for schools in certain locations while seeing each school’s Best Value Index and other details when they hover over a point.
