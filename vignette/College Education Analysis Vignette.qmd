@@ -31,7 +31,7 @@ The general structure of the final processed data consists of a single data fram
 
 ## Part 4: EDA Inputs, Controls, and Outputs
 
-The student tab primarily handles the exploratory data analysis. The app initially opens to the intro tab which gives a description of what the app is for. An actor that uses the app as a student or a parent trying to choose a good college would then switch over to the Students and Parents tab. This tab is made up of 3 sub-tabs, including variable exploration, best value index, and map. If a student is searching wants to find a good East-Coast private school that has less than a 60% acceptance rate, they can begin to filter for their criteria in the left sidebar panel. The top of the sidebar panel will let them pick their variable(s) of interest, with a default of admission rate. If a student wants to look at the competitiveness of getting into the school, they will leave the default variable and continue to other filters that decrease their dataset.
+The student tab primarily handles the exploratory data analysis. The app initially opens to the intro tab which gives a description of what the app is for. An actor that uses the app as a student or a parent trying to choose a good college would then switch over to the Students and Parents tab. This tab is made up of 3 sub-tabs, including variable exploration, best value index, and map. If a student is searching wants to find a good New England private school that has less than a 60% acceptance rate, they can begin to filter for their criteria in the left sidebar panel. The top of the sidebar panel will let them pick their variable(s) of interest, with a default of admission rate. If a student wants to look at the competitiveness of getting into the school, they will leave the default variable and continue to other filters that decrease their dataset.
 
 Here is a code chunk example of some of the user input filters
 
@@ -121,7 +121,7 @@ After a student explores their schools admission rates, they can switch to the B
 
 @fig-bvi shows how what a graph of BVI's looks like with the highlighted schools.
 
-Lastly, a user can switch to the map tab to filter and look at their preferred locations to see colleges they may not have considered based more on location.
+Lastly, a user can switch to the map tab to look at their preferred college's locations and to consider colleges they may not have known about based more on location.
 
 ```{r}
 #| include: false
@@ -160,7 +160,7 @@ output$collegeMap <- renderLeaflet({
 })
 ```
 
-![Map](../images/SS_map.png){#fig-map}
+![Map](../images/SS_map2.png){#fig-map}
 
 @fig-map shows our map tab with a blue dot for all universities in New England. The user can click on any dot to get selected information on each university.
 
