@@ -1,3 +1,34 @@
+# College Education Analysis Dashboard (with AI Chatbot)
+
+> **This is a fork of the [original College-Data-Shiny-App-Dashboard](https://github.com/jsmarkertjs/College-Data-Shiny-App-Dashboard)**
+> — enhanced with an AI-powered chat assistant built with [ellmer](https://ellmer.tidyverse.org/) and [shinychat](https://posit-dev.github.io/shinychat/).
+
+## AI Chatbot — Quick Start
+
+1. **Set your Gemini API key** in `.Renviron`:
+   ```
+   GEMINI_API_KEY=your_key_here
+   ```
+
+2. **Install dependencies** (original packages + chatbot packages):
+   ```r
+   install.packages(c("shiny", "readr", "dplyr", "leaflet", "DT", "tidyverse",
+                      "gridExtra", "bslib", "thematic",
+                      "ellmer", "shinychat", "duckdb", "DBI"))
+   ```
+
+3. **Run the app:** Open `app.R` in RStudio and click **Run App**.
+
+4. **Use the chatbot:** Navigate to the **Chat Assistant** tab, type a question, and press Enter. The chatbot can:
+   - Answer questions about the college dataset (writes SQL queries against a DuckDB database)
+   - Search the web for external information (weather, events, general knowledge) with source citations
+
+Refer to the [original README](#original-readme) below for the full dashboard overview and features.
+
+---
+
+# Original README
+
 # College Education Analysis Dashboard
 
 ## Overview
