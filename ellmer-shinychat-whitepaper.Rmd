@@ -2,10 +2,10 @@
 title: "AI-Powered Shiny Chatbots with ellmer and shinychat"
 author: "Jack Markert"
 date: "`r Sys.Date()`"
-subtitle: ITEC 300 — R Package Project
 header-includes:
   - \usepackage{fvextra}
-  - \fvset{breaklines=true, breakanywhere=true}
+  - \DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,breakanywhere,commandchars=\\\{\}}
+  - \usepackage{float}
 output:
   pdf_document:
     toc: true
@@ -16,10 +16,17 @@ output:
     theme: flatly
   word_document:
     toc: true
+subtitle: ITEC 300 — R Package Project
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+knitr::opts_chunk$set(
+  echo = TRUE,
+  message = FALSE,
+  warning = FALSE,
+  tidy = TRUE,
+  tidy.opts = list(width.cutoff = 60)
+)
 ```
 
 ## 1. Purpose
@@ -181,7 +188,7 @@ When a user types a message and presses Enter, `input$college_chat_user_input` r
 
 ### Personal Testing
 
-The complete source code for the fork of the College Data Shiny Dashboard is available on GitHub here ([link](https://github.com/jsmarkertjs/College-Data-Shiny-Dashboard-With-Ellmer-Chatbot)). To run it:
+The complete source code for the fork of the College Data Shiny Dashboard is available on GitHub ([click here](https://github.com/jsmarkertjs/College-Data-Shiny-Dashboard-With-Ellmer-Chatbot)). To run it:
 
 1.  Clone the repository
 2.  Generate a Gemini API key from Google AI Studio (free tier works fine for testing)
