@@ -1,33 +1,35 @@
 # College Education Analysis Dashboard (with AI Chatbot)
 
-> **This is a fork of the [original College-Data-Shiny-App-Dashboard](https://github.com/jsmarkertjs/College-Data-Shiny-App-Dashboard)**
-> — enhanced with an AI-powered chat assistant built with [ellmer](https://ellmer.tidyverse.org/) and [shinychat](https://posit-dev.github.io/shinychat/).
+> **This is a fork of the [original College-Data-Shiny-App-Dashboard](https://github.com/jsmarkertjs/College-Data-Shiny-App-Dashboard)** — enhanced with an AI-powered chat assistant built with [ellmer](https://ellmer.tidyverse.org/) and [shinychat](https://posit-dev.github.io/shinychat/). See original for contributions. Found out today you cant fork your own repo....
 
 ## AI Chatbot — Quick Start
 
-1. **Set your Gemini API key** in `.Renviron`:
-   ```
-   GEMINI_API_KEY=your_key_here
-   ```
+1.  **Set your Gemini API key** in `.Renviron`:
 
-2. **Install dependencies** (original packages + chatbot packages):
-   ```r
-   install.packages(c("shiny", "readr", "dplyr", "leaflet", "DT", "tidyverse",
-                      "gridExtra", "bslib", "thematic",
-                      "ellmer", "shinychat", "duckdb", "DBI"))
-   ```
+    ```         
+    GEMINI_API_KEY=your_key_here
+    ```
 
-3. **Run the app:** Open `app.R` in RStudio and click **Run App**.
+2.  **Install dependencies** (original packages + chatbot packages):
 
-4. **Use the chatbot:** Navigate to the **Chat Assistant** tab, type a question, and press Enter. The chatbot can:
-   - Answer questions about the college dataset (writes SQL queries against a DuckDB database)
-   - Search the web for external information (weather, events, general knowledge) with source citations
+    ``` r
+    install.packages(c("shiny", "readr", "dplyr", "leaflet", "DT", "tidyverse",
+                       "gridExtra", "bslib", "thematic",
+                       "ellmer", "shinychat", "duckdb", "DBI"))
+    ```
+
+3.  **Run the app:** Open `app.R` in RStudio and click **Run App**.
+
+4.  **Use the chatbot:** Navigate to the **Chat Assistant** tab, type a question, and press Enter. The chatbot can:
+
+    - Answer questions about the college dataset (writes SQL queries against a DuckDB database)
+    - Search the web for external information (weather, events, general knowledge) with source citations
 
 Refer to the [original README](#original-readme) below for the full dashboard overview and features.
 
----
+------------------------------------------------------------------------
 
-# Original README
+# Original README {#original-readme}
 
 # College Education Analysis Dashboard
 
@@ -55,23 +57,23 @@ The dataset consolidates the U.S. Department of Education's College Scorecard (2
 
 ## Features
 
--   **Student Tab:** Filter schools by demographics and cost to calculate a Best Value Index (BVI) (Earnings ÷ (Net Cost + Debt)) and view results on an interactive map.
+- **Student Tab:** Filter schools by demographics and cost to calculate a Best Value Index (BVI) (Earnings ÷ (Net Cost + Debt)) and view results on an interactive map.
 
--   **Researcher Tab:** Perform single and multi-variable exploration (T-tests, ANOVA) and build custom regression models to predict graduation rates.
+- **Researcher Tab:** Perform single and multi-variable exploration (T-tests, ANOVA) and build custom regression models to predict graduation rates.
 
--   **Data Table:** View, sort, and download the full cleaned dataset as a CSV.
+- **Data Table:** View, sort, and download the full cleaned dataset as a CSV.
 
 ## Contributors
 
--   **Jon Cote (DATA-613):** [cotejon-033](https://github.com/cotejon-033)
+- **Jon Cote (DATA-613):** [cotejon-033](https://github.com/cotejon-033)
 
--   **John Dye (DATA-413):** [ellis-di](https://github.com/ellis-di)
+- **John Dye (DATA-413):** [ellis-di](https://github.com/ellis-di)
 
--   **Camden Egan (DATA-413):** [ce8304a](https://github.com/ce8304a)
+- **Camden Egan (DATA-413):** [ce8304a](https://github.com/ce8304a)
 
--   **Jack Markert (DATA-413):** [jsmarkertjs](https://github.com/jsmarkertjs)
+- **Jack Markert (DATA-413):** [jsmarkertjs](https://github.com/jsmarkertjs)
 
--   **Shae Ramberg (DATA-413):** [shaeramberg](https://github.com/shaeramberg)
+- **Shae Ramberg (DATA-413):** [shaeramberg](https://github.com/shaeramberg)
 
 ## License
 
