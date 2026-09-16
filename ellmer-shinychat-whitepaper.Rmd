@@ -40,7 +40,7 @@ While the use cases with tailoring an LLM for individual projects is almost limi
 - **Document Q&A interfaces**: Where users upload files and ask questions about their contents
 - **Interactive tutorials**: Where an AI walks users through a workflow step by step
 
-The examples in this whitepaper come from a real implementation. Myself and team of other students from a previous semester developed a College Data Shiny Dashboard that lets users explore US college statistics such as admissions, costs, earnings, demographics, and location data for approximately 1,865 four-year institutions. This fork of that project allows users to interact with the data we have gathered with the Ellmer chatbot. The full source code is available at the accompanying GitHub repository allowing anyone to clone it and run the app themselves.
+The examples in this whitepaper come from a real implementation. Myself and team of other students from a previous semester developed a College Data Shiny Dashboard that lets users explore US college statistics such as admissions, costs, earnings, demographics, and location data for approximately 1,865 four-year institutions. This fork of that project allows users to interact with the data we have gathered with the Ellmer chatbot. The full source code is available at the accompanying GitHub repository allowing anyone to clone it and run the app themselves (see Personal Testing section for GitHub link to repo).
 
 ## 2. Core Functions with Example Analysis
 
@@ -178,7 +178,7 @@ When a user types a message and presses Enter, `input$college_chat_user_input` r
 
 ### Personal Testing
 
-The complete source code for the fork of the College Data Shiny Dashboard is available on GitHub here (link). To run it:
+The complete source code for the fork of the College Data Shiny Dashboard is available on GitHub here ([link](https://github.com/jsmarkertjs/College-Data-Shiny-Dashboard-With-Ellmer-Chatbot)). To run it:
 
 1.  Clone the repository
 2.  Generate a Gemini API key from Google AI Studio (free tier works fine for testing)
