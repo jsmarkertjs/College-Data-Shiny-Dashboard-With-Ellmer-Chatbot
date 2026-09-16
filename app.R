@@ -10,7 +10,11 @@ library(DT)
 library(tidyverse)
 library(gridExtra)
 library(bslib)      
-library(thematic)   
+library(thematic)
+library(ellmer)
+library(shinychat)
+library(duckdb)
+library(DBI)   
 
 # Load Data
 raw_data <- read_csv("./data/college_scorecard_11-21.csv")
@@ -86,6 +90,19 @@ full_data <- raw_data |>
     # Check if Hispanic Serving exists
     `Hispanic Serving` = if("Hispanic Serving" %in% names(raw_data)) ifelse(`Hispanic Serving` == 1, "Yes", "No") else "No"
   )
+
+# Remove raw numeric CONTROL (already represented as text "Control")
+full_data <- full_data |> select(-any_of("CONTROL"))
+# DuckDB treats column names case-insensitively — dedupe by lowercase
+full_data <- full_data[!duplicated(tolower(names(full_data)))]
+
+# Create in-memory DuckDB database with full college data
+duckdb_con <- dbConnect(duckdb::duckdb(), ":memory:")
+dbWriteTable(duckdb_con, "colleges", full_data, overwrite = TRUE)
+
+# Generate schema description for the system prompt
+college_schema <- df_schema(full_data)
+college_schema_text <- paste(college_schema, collapse = "\n")
 
 # Helper vectors for UI Choices
 #original numeric_vars (Removed "Urbanization") for Researchers Tab
@@ -554,6 +571,12 @@ ui <- navbarPage(
       br(), br(),
       DTOutput("full_table")
     )
+  ),
+  
+  # --- Main Tab 5: Chat Assistant ---
+  tabPanel(
+    "Chat Assistant",
+    chat_ui("college_chat", height = "calc(100vh - 150px)")
   )
 ) # End of User Input Section
 
@@ -1114,9 +1137,69 @@ server <- function(input, output, session) {
     },
     content = function(file) {
       write_csv(full_table_data(), file)
-    }
+}
   )
   
+  # --- Chat Assistant Server Logic ---
+  system_prompt <- paste(
+    "You are a helpful assistant for exploring US college data from the College Scorecard dataset.",
+    "The database contains information about approximately 1,865 four-year US colleges and universities.",
+    "",
+    "You have two tools available:",
+    "1. `query_college_data` - Execute SQL SELECT queries against the DuckDB `colleges` table to answer questions about the data.",
+    "2. Google web search - Automatically used for questions outside the scope of the college data",
+    "   (e.g., admissions events, campus life, weather, news, general information).",
+    "",
+    "Guidelines:",
+    "- Use `query_college_data` when the user asks about colleges in the dataset (rankings, statistics, comparisons, filtering).",
+    "- Use web search for external/current information not in the database.",
+    "- When writing SQL, always use SELECT statements only.",
+    "- For text searches on college names, use LIKE with % wildcards for partial matches.",
+    "- The table is named `colleges` (case-sensitive).",
+    "- Be concise and helpful. Cite sources when using web search results. Do not use emojis",
+    "",
+    "Here is the full schema of the `colleges` table:",
+    college_schema_text,
+    sep = "\n"
+  )
+  
+  chat <- chat_google_gemini(
+    system_prompt = system_prompt,
+    model = "gemini-3.6-flash"
+  )
+  
+  chat$register_tool(google_tool_web_search())
+  
+  query_college_data <- tool(
+    function(sql_query) {
+      tryCatch({
+        result <- DBI::dbGetQuery(duckdb_con, sql_query)
+        if (nrow(result) == 0) {
+          return("Query returned 0 rows. Try broadening your search criteria.")
+        }
+        if (nrow(result) > 50) {
+          truncated <- head(result, 50)
+          out <- paste(utils::capture.output(print(truncated, max = 50)), collapse = "\n")
+          return(paste0(out, "\n\n(Results truncated to first 50 of ", nrow(result), " total rows. Refine your query for more specific results.)"))
+        }
+        paste(utils::capture.output(print(result, max = 50)), collapse = "\n")
+      }, error = function(e) {
+        paste("SQL Error:", e$message, "\nPlease check your query syntax and try again.")
+      })
+    },
+    name = "query_college_data",
+    description = "Execute a SQL SELECT query against the `colleges` table to retrieve college data. Use this for any question about the college dataset (rankings, statistics, comparisons, finding schools matching criteria, etc.).",
+    arguments = list(
+      sql_query = type_string("A SQL SELECT query to run against the `colleges` table. Use standard SQL syntax.")
+    )
+  )
+  chat$register_tool(query_college_data)
+  
+  observeEvent(input$college_chat_user_input, {
+    stream <- chat$stream_async(!!!input$college_chat_user_input)
+    chat_append("college_chat", stream)
+  })
+
 }
 
 # --- Run the Application ---
